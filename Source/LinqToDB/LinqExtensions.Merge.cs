@@ -1083,13 +1083,16 @@ namespace LinqToDB
 
 			if (currentQuery is IQueryProviderAsync query)
 				return query.ExecuteAsync<int>(expr, token);
-
+#if !THE_RAOT_CORE
 			return Task.Run(() => currentQuery.Provider.Execute<int>(expr), token);
+#else
+			return TaskEx.Run(() => currentQuery.Provider.Execute<int>(expr), token);
+#endif
 		}
 
-		#endregion
+#endregion
 
-		#region MergeAsync
+#region MergeAsync
 		/// <summary>
 		/// Executes merge command and returns total number of target records, affected by merge operations.
 		/// </summary>
@@ -1115,9 +1118,12 @@ namespace LinqToDB
 
 			if (currentQuery is IQueryProviderAsync query)
 				return query.ExecuteAsync<int>(expr, token);
-
+#if !THE_RAOT_CORE
 			return Task.Run(() => currentQuery.Provider.Execute<int>(expr), token);
+#else
+			return TaskEx.Run(() => currentQuery.Provider.Execute<int>(expr), token);
+#endif
 		}
-		#endregion
+#endregion
 	}
 }

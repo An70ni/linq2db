@@ -78,6 +78,7 @@
 		<!--tests-->
 		<PackageVersion Include="System.Configuration.ConfigurationManager"             Version="6.0.1"         />
 		<PackageVersion Include="protobuf-net.Grpc.AspNetCore"                          Version="1.0.177"       />
+		<PackageVersion Include="Theraot.Core"											Version="3.2.5.0"       />
 	</ItemGroup>
 	
 	<!--linq2db source-->

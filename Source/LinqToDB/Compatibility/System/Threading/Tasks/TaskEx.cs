@@ -1,8 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿#if !THE_RAOT_CORE
+using System.Runtime.CompilerServices;
 #if NET45
 using LinqToDB.Common.Internal;
 #endif
-
 namespace System.Threading.Tasks
 {
 	static class TaskEx
@@ -21,3 +21,4 @@ namespace System.Threading.Tasks
 		}
 	}
 }
+#endif

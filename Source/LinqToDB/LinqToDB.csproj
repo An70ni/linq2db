@@ -5,7 +5,7 @@
 		<RootNamespace>LinqToDB</RootNamespace>
 
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\linq2db.xml</DocumentationFile>
-		<TargetFrameworks>net45;net46;net472;netstandard2.0;netstandard2.1;netcoreapp3.1;net6.0</TargetFrameworks>
+		<TargetFrameworks>net40;net45;net46;net472;netstandard2.0;netstandard2.1;netcoreapp3.1;net6.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -16,7 +16,11 @@
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<DefineConstants>OVERRIDETOSTRING;$(DefineConstants)</DefineConstants>
 	</PropertyGroup>
-
+	
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
+		<DefineConstants>THE_RAOT_CORE;$(DefineConstants)</DefineConstants>
+	</PropertyGroup>
+	
 	<PropertyGroup Condition=" '$(TargetFramework)' != 'net45' AND '$(TargetFramework)' != 'net46' ">
 		<DefineConstants>NATIVE_ASYNC;$(DefineConstants)</DefineConstants>
 	</PropertyGroup>
@@ -96,6 +100,18 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>MutableTuple.tt</DependentUpon>
 		</Compile>
+	</ItemGroup>	
+		
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+		<PackageReference Include="Theraot.Core"/>
+		<Reference Include="Microsoft.CSharp" />
+		<Reference Include="System.Configuration" />
+		<Reference Include="System.Data.DataSetExtensions" />
+		<Reference Include="System.Data.Linq" />
+		<Reference Include="System.Data.Services" />
+		<Reference Include="System.ServiceModel" />
+		<Reference Include="System.Web.Services" />
+		<Reference Include="System.ComponentModel.DataAnnotations" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'net472' ">

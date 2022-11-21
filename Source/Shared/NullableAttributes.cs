@@ -6,7 +6,7 @@
 // Source: https://github.com/dotnet/runtime/blob/master/src/libraries/System.Private.CoreLib/src/System/Diagnostics/CodeAnalysis/NullableAttributes.cs
 namespace System.Diagnostics.CodeAnalysis
 {
-#if !NETSTANDARD2_1PLUS
+#if !NETSTANDARD2_1PLUS && !THE_RAOT_CORE
 	/// <summary>Specifies that null is allowed as an input even if the corresponding type disallows it.</summary>
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property, Inherited = false)]
 	sealed class AllowNullAttribute : Attribute
@@ -127,7 +127,7 @@ namespace System.Diagnostics.CodeAnalysis
 	}
 #endif
 
-#if !NET6_0_OR_GREATER
+#if !NET6_0_OR_GREATER && !THE_RAOT_CORE
 	/// <summary>Specifies that the method or property will ensure that the listed field and property members have not-null values.</summary>
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
 	sealed class MemberNotNullAttribute : Attribute
