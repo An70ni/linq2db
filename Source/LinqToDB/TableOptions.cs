@@ -65,34 +65,74 @@ namespace LinqToDB
 
 	public static partial class LinqExtensions
 	{
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool IsSet                        (this TableOptions tableOptions) => tableOptions != TableOptions.NotSet;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool IsTemporaryOptionSet         (this TableOptions tableOptions) => (tableOptions & TableOptions.IsTemporaryOptionSet) != 0;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool HasCreateIfNotExists         (this TableOptions tableOptions) => (tableOptions & TableOptions.CreateIfNotExists) != 0;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool HasDropIfExists              (this TableOptions tableOptions) => (tableOptions & TableOptions.DropIfExists) != 0;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool HasIsTemporary               (this TableOptions tableOptions) => (tableOptions & TableOptions.IsTemporary) != 0;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool HasIsLocalTemporaryStructure (this TableOptions tableOptions) => (tableOptions & TableOptions.IsLocalTemporaryStructure) != 0;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool HasIsGlobalTemporaryStructure(this TableOptions tableOptions) => (tableOptions & TableOptions.IsGlobalTemporaryStructure) != 0;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool HasIsLocalTemporaryData      (this TableOptions tableOptions) => (tableOptions & TableOptions.IsLocalTemporaryData) != 0;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool HasIsGlobalTemporaryData     (this TableOptions tableOptions) => (tableOptions & TableOptions.IsGlobalTemporaryData) != 0;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool HasIsTransactionTemporaryData(this TableOptions tableOptions) => (tableOptions & TableOptions.IsTransactionTemporaryData) != 0;
 
 		public static TableOptions Or(this TableOptions tableOptions, TableOptions additionalOptions)

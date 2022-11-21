@@ -1248,7 +1248,11 @@ namespace LinqToDB.Data
 			return dataReader;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private bool InitCommand()
 		{
 			var hasParameters = Parameters?.Length > 0;
@@ -1369,7 +1373,11 @@ namespace LinqToDB.Data
 			return result;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		void SetRebindParameters(DataReaderWrapper rd)
 		{
 			if (rd.Command?.Parameters.Count > 0 && Parameters?.Length > 0)

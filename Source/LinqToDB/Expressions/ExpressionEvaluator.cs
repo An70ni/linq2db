@@ -21,7 +21,11 @@ namespace LinqToDB.Expressions
 	/// </summary>
 	public static class ExpressionEvaluator
 	{
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static T? EvaluateExpression<T>(this Expression? expr)
 			where T : class
 		{

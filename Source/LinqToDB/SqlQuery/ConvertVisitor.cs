@@ -79,14 +79,22 @@ namespace LinqToDB.SqlQuery
 			parentQuery.ParentSelect = null;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private void Push(IQueryElement element)
 		{
 			if (HasStack)
 				(_stack ??= new()).Add(element);
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private void Pop()
 		{
 			// don't return last value as we don't need it at call sites
@@ -94,20 +102,32 @@ namespace LinqToDB.SqlQuery
 				_stack.RemoveAt(_stack.Count - 1);
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public void AddVisited(IQueryElement element, IQueryElement? newElement)
 		{
 			(_visitedElements ??= new())[element] = newElement;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public void RemoveVisited(IQueryElement element)
 		{
 			if (_visitedElements != null)
 				_visitedElements.Remove(element);
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		void ReplaceVisited(IQueryElement element, IQueryElement? newElement)
 		{
 			List<IQueryElement>? forDelete = null;
@@ -123,8 +143,11 @@ namespace LinqToDB.SqlQuery
 
 			AddVisited(element, newElement);
 		}
-
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		IQueryElement? GetCurrentReplaced(IQueryElement element)
 		{
 			if (_visitedElements != null && _visitedElements.TryGetValue(element, out var replaced))

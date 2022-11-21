@@ -414,7 +414,11 @@ namespace LinqToDB.Extensions
 		/// </summary>
 		/// <param name="type">A <see cref="Type"/> instance. </param>
 		/// <returns><c>true</c>, if <paramref name="type"/> represents <see cref="Nullable{T}"/> type; otherwise, <c>false</c>.</returns>
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool IsNullable(this Type type)
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
@@ -453,7 +457,11 @@ namespace LinqToDB.Extensions
 		/// </summary>
 		/// <param name="type">Value type to wrap. Must be value type (except <see cref="Nullable{T}"/> itself).</param>
 		/// <returns>Type, wrapped by <see cref="Nullable{T}"/>.</returns>
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static Type AsNullable(this Type type)
 		{
 			if (type == null)      throw new ArgumentNullException(nameof(type));

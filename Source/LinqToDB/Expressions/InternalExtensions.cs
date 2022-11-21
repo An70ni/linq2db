@@ -534,7 +534,11 @@ namespace LinqToDB.Expressions
 			return 0;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool IsNullValue(this Expression expr)
 		{
 			return (expr is ConstantExpression c && c.Value == null)

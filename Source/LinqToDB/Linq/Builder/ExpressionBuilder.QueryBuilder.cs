@@ -718,7 +718,11 @@ namespace LinqToDB.Linq.Builder
 		private FindVisitor<ExpressionBuilder>? _enforceServerSideVisitorTrue;
 		private FindVisitor<ExpressionBuilder>? _enforceServerSideVisitorFalse;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private FindVisitor<ExpressionBuilder> GetVisitor(bool enforceServerSide)
 		{
 			if (enforceServerSide)

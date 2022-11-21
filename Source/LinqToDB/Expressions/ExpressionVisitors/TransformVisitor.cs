@@ -189,10 +189,18 @@ namespace LinqToDB.Expressions
 		}
 
 		// ReSharper disable once InconsistentNaming
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformXE(Expression expr) => expr;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(TryExpression e)
 		{
 			var b = Transform(e.Body);
@@ -203,7 +211,11 @@ namespace LinqToDB.Expressions
 			return e.Update(b, c, f, t);
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private CatchBlock TransformCatchBlock(CatchBlock h)
 		{
 			return h.Update(
@@ -212,7 +224,11 @@ namespace LinqToDB.Expressions
 				Transform(h.Body));
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(SwitchExpression e)
 		{
 			var s = Transform(e.SwitchValue);
@@ -222,7 +238,11 @@ namespace LinqToDB.Expressions
 			return e.Update(s, c, d);
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private SwitchCase TransformSwitchCase(SwitchCase cs)
 		{
 			return cs.Update(
@@ -230,7 +250,11 @@ namespace LinqToDB.Expressions
 				Transform(cs.Body));
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(ChangeTypeExpression e)
 		{
 			var ex = Transform(e.Expression);
@@ -244,7 +268,11 @@ namespace LinqToDB.Expressions
 			return new ChangeTypeExpression(ex, e.Type);
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformXInit(NewArrayExpression e)
 		{
 			var ex = Transform(e.Expressions);
@@ -252,7 +280,11 @@ namespace LinqToDB.Expressions
 			return ex != e.Expressions ? Expression.NewArrayInit(e.Type.GetElementType()!, ex) : e;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(NewArrayExpression e)
 		{
 			var ex = Transform(e.Expressions);
@@ -260,7 +292,11 @@ namespace LinqToDB.Expressions
 			return ex != e.Expressions ? Expression.NewArrayBounds(e.Type, ex) : e;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(MemberInitExpression e)
 		{
 			return e.Update(
@@ -268,7 +304,11 @@ namespace LinqToDB.Expressions
 				Transform(e.Bindings, Modify));
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(MemberExpression e)
 		{
 			var ex = Transform(e.Expression);
@@ -276,7 +316,11 @@ namespace LinqToDB.Expressions
 			return ex != e.Expression ? Expression.MakeMemberAccess(ex, e.Member) : e;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(ListInitExpression e)
 		{
 			var n = Transform(e.NewExpression);
@@ -285,14 +329,22 @@ namespace LinqToDB.Expressions
 			return n != e.NewExpression || i != e.Initializers ? Expression.ListInit((NewExpression)n, i) : e;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private ElementInit TransformElementInit(ElementInit p)
 		{
 			var args = Transform(p.Arguments);
 			return args != p.Arguments ? Expression.ElementInit(p.AddMethod, args) : p;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(LambdaExpression e)
 		{
 			var b = Transform(e.Body);
@@ -301,7 +353,11 @@ namespace LinqToDB.Expressions
 			return b != e.Body || p != e.Parameters ? Expression.Lambda(e.Type, b, p) : e;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(MethodCallExpression e)
 		{
 			var o = Transform(e.Object);
@@ -310,14 +366,22 @@ namespace LinqToDB.Expressions
 			return o != e.Object || a != e.Arguments ? Expression.Call(o, e.Method, a) : e;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(UnaryExpression e)
 		{
 			var o = Transform(e.Operand);
 			return o != e.Operand ? Expression.MakeUnary(e.NodeType, o, e.Type, e.Method) : e;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression TransformX(BinaryExpression e)
 		{
 			var c = Transform(e.Conversion);

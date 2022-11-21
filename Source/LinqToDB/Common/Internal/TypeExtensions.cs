@@ -6,7 +6,11 @@ namespace LinqToDB.Common.Internal
 {
 	public static class TypeExtensions
 	{
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static Type UnwrapNullableType(this Type type)
 			=> Nullable.GetUnderlyingType(type) ?? type;
 
@@ -15,7 +19,11 @@ namespace LinqToDB.Common.Internal
 		/// </summary>
 		/// <param name="type">Type to test.</param>
 		/// <returns><c>true</c> if type is reference type or <see cref="Nullable{T}"/>.</returns>
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static bool IsNullableType(this Type type)
 			=> !type.IsValueType || type.IsNullable();
 

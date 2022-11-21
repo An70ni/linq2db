@@ -37,7 +37,11 @@ namespace LinqToDB.Linq.Builder
 
 		private VisitFuncVisitor<ExpressionTestGenerator>? _buildExpressionVisitor;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private void Build(Expression expr)
 		{
 			(_buildExpressionVisitor ??= VisitFuncVisitor<ExpressionTestGenerator>.Create(this, static (ctx, e) => ctx.BuildExpression(e))).Visit(expr);

@@ -594,13 +594,21 @@ namespace LinqToDB.Data
 
 #endregion
 
+#if !THE_RAOT_CORE
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+			[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 			static void InitFirstCommand(DataConnection dataConnection, ExecutionPreparedQuery executionQuery)
 			{
 				InitCommand(dataConnection, executionQuery, 0);
 			}
 
+#if !THE_RAOT_CORE
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+			[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 			static void InitCommand(DataConnection dataConnection, ExecutionPreparedQuery executionQuery, int index)
 			{
 				InitCommand(dataConnection,
@@ -609,7 +617,11 @@ namespace LinqToDB.Data
 					index == 0 ? executionQuery.PreparedQuery.QueryHints : null);
 			}
 
+#if !THE_RAOT_CORE
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+			[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 			static void InitCommand(DataConnection dataConnection, CommandWithParameters queryCommand, DbParameter[]? dbParameters, IReadOnlyCollection<string>? queryHints)
 			{
 				var hasParameters = dbParameters?.Length > 0;

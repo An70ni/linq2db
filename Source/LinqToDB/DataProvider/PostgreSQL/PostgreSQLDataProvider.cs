@@ -216,7 +216,11 @@ namespace LinqToDB.DataProvider.PostgreSQL
 			return new PostgreSQLSchemaProvider(this);
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		internal object? NormalizeTimeStamp(object? value, DbDataType dataType)
 		{
 			if (PostgreSQLTools.NormalizeTimestampData)

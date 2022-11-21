@@ -31,7 +31,11 @@ namespace LinqToDB.Common
 		/// implementation of ByteArrayToHexViaLookup32 was the fastest method
 		/// not involving unsafe
 		/// </remarks>
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static StringBuilder AppendByteArrayAsHexViaLookup32(this StringBuilder sb, byte[] bytes)
 		{
 			var lookup32 = _lookup32;
@@ -46,7 +50,11 @@ namespace LinqToDB.Common
 			return sb;
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static StringBuilder AppendByteAsHexViaLookup32(this StringBuilder sb, byte @byte)
 		{
 			var val = _lookup32[@byte];

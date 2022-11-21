@@ -95,7 +95,11 @@ namespace LinqToDB.Expressions
 			}
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		static bool CompareMemberExpression(MemberInfo memberInfo, EqualsToInfo info)
 		{
 			if (info.QueryableMemberAccessorDic == null ||

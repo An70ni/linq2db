@@ -449,7 +449,11 @@ namespace LinqToDB.Linq.Builder
 			}
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private FindVisitor<CanBeCompiledContext> GetCanBeCompiledVisitor()
 		{
 			if (_canBeCompiledFindVisitor == null)
@@ -889,7 +893,11 @@ namespace LinqToDB.Linq.Builder
 		private FindVisitor<ExpressionTreeOptimizationContext>? _enforceServerSideVisitorTrue;
 		private FindVisitor<ExpressionTreeOptimizationContext>? _enforceServerSideVisitorFalse;
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private FindVisitor<ExpressionTreeOptimizationContext> GetVisitor(bool enforceServerSide)
 		{
 			if (enforceServerSide)

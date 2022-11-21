@@ -29,7 +29,11 @@ namespace LinqToDB.Common
 		/// </summary>
 		public T Value
 		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !THE_RAOT_CORE
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+			[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 			get => _hasValue ? _value : throw new InvalidOperationException($"{nameof(Option<int>)}.{nameof(Value)} not set");
 		}
 
@@ -38,7 +42,11 @@ namespace LinqToDB.Common
 		/// </summary>
 		/// <param name="value">Option's value.</param>
 		/// <returns>Option instance.</returns>
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		public static Option<T> Some(T value)
 		{
 			return new Option<T>(value);

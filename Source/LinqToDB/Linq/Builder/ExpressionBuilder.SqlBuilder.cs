@@ -2785,8 +2785,12 @@ namespace LinqToDB.Linq.Builder
 
 		private TransformVisitor<ExpressionBuilder>? _removeNullPropagationTransformer;
 		private TransformVisitor<ExpressionBuilder>? _removeNullPropagationTransformerForSearch;
-		
+
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private TransformVisitor<ExpressionBuilder> GetRemoveNullPropagationTransformer(bool forSearch)
 		{
 			if (forSearch)

@@ -287,7 +287,11 @@ namespace LinqToDB.Expressions
 			}
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		private Expression ConvertPathTo(Type type)
 		{
 			return _path = _path.Type != type ? Expression.Convert(_path, type) : _path;

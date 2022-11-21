@@ -28,7 +28,11 @@ namespace LinqToDB.Interceptors
 				_removeList.Add(interceptor);
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		protected void RemoveDelayed()
 		{
 			foreach (var interceptor in _removeList)
@@ -36,7 +40,11 @@ namespace LinqToDB.Interceptors
 			_removeList.Clear();
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		protected void Apply(Action func)
 		{
 			_enumerating = true;
@@ -52,7 +60,11 @@ namespace LinqToDB.Interceptors
 			}
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		protected T Apply<T>(Func<T> func)
 		{
 			_enumerating = true;
@@ -68,7 +80,11 @@ namespace LinqToDB.Interceptors
 			}
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		protected async Task Apply(Func<Task> func)
 		{
 			_enumerating = true;
@@ -84,7 +100,11 @@ namespace LinqToDB.Interceptors
 			}
 		}
 
+#if !THE_RAOT_CORE
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#else
+		[MethodImpl(MethodImplOptionsEx.AggressiveInlining)]
+#endif
 		protected async Task<T> Apply<T>(Func<Task<T>> func)
 		{
 			_enumerating = true;
