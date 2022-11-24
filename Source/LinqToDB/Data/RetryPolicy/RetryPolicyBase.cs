@@ -200,8 +200,11 @@ namespace LinqToDB.Data.RetryPolicy
 
 					OnRetry();
 				}
-
+#if NATIVE_ASYNC || !THE_RAOT_CORE
 				await Task.Delay(delay.Value, cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext);
+#else
+				await TaskEx.Delay(delay.Value, cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext);
+#endif
 			}
 		}
 

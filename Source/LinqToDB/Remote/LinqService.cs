@@ -86,14 +86,19 @@ namespace LinqToDB.Remote
 		{
 			using var ctx = CreateDataContext(configuration);
 
-			return Task.FromResult(new LinqServiceInfo()
+			var linqServiceInfo = new LinqServiceInfo()
 			{
-				MappingSchemaType     = ctx.DataProvider.MappingSchema.GetType().AssemblyQualifiedName!,
-				SqlBuilderType        = ctx.DataProvider.CreateSqlBuilder(ctx.MappingSchema).GetType().AssemblyQualifiedName!,
-				SqlOptimizerType      = ctx.DataProvider.GetSqlOptimizer().GetType().AssemblyQualifiedName!,
-				SqlProviderFlags      = ctx.DataProvider.SqlProviderFlags,
+				MappingSchemaType = ctx.DataProvider.MappingSchema.GetType().AssemblyQualifiedName!,
+				SqlBuilderType = ctx.DataProvider.CreateSqlBuilder(ctx.MappingSchema).GetType().AssemblyQualifiedName!,
+				SqlOptimizerType = ctx.DataProvider.GetSqlOptimizer().GetType().AssemblyQualifiedName!,
+				SqlProviderFlags = ctx.DataProvider.SqlProviderFlags,
 				SupportedTableOptions = ctx.DataProvider.SupportedTableOptions
-			});
+			};
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return TaskEx.FromResult(linqServiceInfo);
+#else
+			return Task.FromResult(linqServiceInfo);
+#endif
 		}
 
 		#region ExecuteNonQuery + ExecuteNonQueryAsync

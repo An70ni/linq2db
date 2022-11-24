@@ -9,6 +9,9 @@ namespace LinqToDB.SqlQuery
 	using SqlProvider;
 	using Common;
 	using Mapping;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public static partial class QueryHelper
 	{
@@ -1165,7 +1168,13 @@ namespace LinqToDB.SqlQuery
 							visitor.AddVisited(query.Select.Columns[index], newColumn);
 						}
 
-						visitor.Context.onWrap(visitor.Context.context, queries);
+						visitor.Context.onWrap(
+							visitor.Context.context, 
+							queries
+#if !NATIVE_READONLY && THE_RAOT_CORE 
+							.WrapAsIReadOnlyList()
+#endif
+							);
 
 						var levelTables = EnumerateLevelTables(query).ToArray();
 						var resultQuery = queries[0];

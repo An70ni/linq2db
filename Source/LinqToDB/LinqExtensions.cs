@@ -715,8 +715,11 @@ namespace LinqToDB
 
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
-
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#else
 			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#endif
 		}
 
 		/// <summary>
@@ -767,8 +770,11 @@ namespace LinqToDB
 
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
-
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#else
 			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#endif
 		}
 
 		#endregion
@@ -834,7 +840,11 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#else
 			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#endif
 		}
 
 		/// <summary>
@@ -884,7 +894,11 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#else
 			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#endif
 		}
 
 		/// <summary>
@@ -942,7 +956,13 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+
 		}
 
 		/// <summary>
@@ -989,7 +1009,12 @@ namespace LinqToDB
 			if (currentQuery is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentQuery.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+				return await Task
+#endif
+				.Run(() => currentQuery.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		/// <summary>
@@ -1051,7 +1076,12 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		internal class Updatable<T> : IUpdatable<T>
@@ -1345,9 +1375,9 @@ namespace LinqToDB
 			return new Updatable<T>(query);
 		}
 
-		#endregion
+#endregion
 
-		#region Insert
+#region Insert
 
 		/// <summary>
 		/// Inserts single record into target table.
@@ -1404,7 +1434,12 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		/// <summary>
@@ -1507,7 +1542,12 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<object>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentSource.Provider.Execute<object>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<object>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		/// <summary>
@@ -1561,7 +1601,7 @@ namespace LinqToDB
 			return target.DataContext.MappingSchema.ChangeTypeTo<decimal>(await InsertWithIdentityAsync(target, setter, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext));
 		}
 
-		#region ValueInsertable
+#region ValueInsertable
 
 		internal class ValueInsertable<T> : IValueInsertable<T>
 		{
@@ -1793,7 +1833,12 @@ namespace LinqToDB
 			if (currentQueryable is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentQueryable.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentQueryable.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		/// <summary>
@@ -1881,7 +1926,12 @@ namespace LinqToDB
 			if (currentQueryable is IQueryProviderAsync query)
 				return await query.ExecuteAsync<object>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentQueryable.Provider.Execute<object>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentQueryable.Provider.Execute<object>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		/// <summary>
@@ -1932,9 +1982,9 @@ namespace LinqToDB
 				await InsertWithIdentityAsync(source, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext));
 		}
 
-		#endregion
+#endregion
 
-		#region SelectInsertable
+#region SelectInsertable
 
 		/// <summary>
 		/// Inserts records from source query into target table.
@@ -1997,7 +2047,12 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		/// <summary>
@@ -2140,7 +2195,12 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<object>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentSource.Provider.Execute<object>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<object>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		/// <summary>
@@ -2413,7 +2473,12 @@ namespace LinqToDB
 			if (currentQueryable is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentQueryable.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentQueryable.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		/// <summary>
@@ -2508,7 +2573,12 @@ namespace LinqToDB
 			if (currentQueryable is IQueryProviderAsync query)
 				return await query.ExecuteAsync<object>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentQueryable.Provider.Execute<object>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentQueryable.Provider.Execute<object>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		/// <summary>
@@ -2562,11 +2632,11 @@ namespace LinqToDB
 				await InsertWithIdentityAsync(source, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext));
 		}
 
-		#endregion
+#endregion
 
-		#endregion
+#endregion
 
-		#region InsertOrUpdate
+#region InsertOrUpdate
 
 		static readonly MethodInfo _insertOrUpdateMethodInfo =
 			MemberHelper.MethodOf(() => InsertOrUpdate<int>(null!,null!,null!)).GetGenericMethodDefinition();
@@ -2640,7 +2710,12 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		static readonly MethodInfo _insertOrUpdateMethodInfo2 =
@@ -2729,12 +2804,17 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
-		#endregion
+#endregion
 
-		#region Drop
+#region Drop
 
 		static readonly MethodInfo _dropMethodInfo2 = MemberHelper.MethodOf(() => Drop<int>(null!, true)).GetGenericMethodDefinition();
 
@@ -2813,7 +2893,12 @@ namespace LinqToDB
 				if (query != null)
 					return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-				return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+				return await TaskEx
+#else
+				return await Task
+#endif
+					.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 			}
 
 			try
@@ -2821,7 +2906,12 @@ namespace LinqToDB
 				if (query != null)
 					return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-				return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+				return await TaskEx
+#else
+				return await Task
+#endif
+					.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 			}
 			catch
 			{
@@ -2830,9 +2920,9 @@ namespace LinqToDB
 			return 0;
 		}
 
-		#endregion
+#endregion
 
-		#region Truncate
+#region Truncate
 
 		static readonly MethodInfo _truncateMethodInfo = MemberHelper.MethodOf(() => Truncate<int>(null!, true)).GetGenericMethodDefinition();
 
@@ -2887,13 +2977,17 @@ namespace LinqToDB
 
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<int>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
-
-			return await Task.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<int>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
-		#endregion
+#endregion
 
-		#region Take / Skip / ElementAt
+#region Take / Skip / ElementAt
 
 		static readonly MethodInfo _takeMethodInfo = MemberHelper.MethodOf(() => Take<int>(null!,null!)).GetGenericMethodDefinition();
 
@@ -3066,7 +3160,12 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<TSource>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 
-			return await Task.Run(() => currentSource.Provider.Execute<TSource>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<TSource>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
 		static readonly MethodInfo _elementAtOrDefaultMethodInfo = MemberHelper.MethodOf(() => ElementAtOrDefault<int>(null!,null!)).GetGenericMethodDefinition();
@@ -3122,13 +3221,17 @@ namespace LinqToDB
 
 			if (currentSource is IQueryProviderAsync query)
 				return await query.ExecuteAsync<TSource>(expr, token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
-
-			return await Task.Run(() => currentSource.Provider.Execute<TSource>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return await TaskEx
+#else
+			return await Task
+#endif
+				.Run(() => currentSource.Provider.Execute<TSource>(expr), token).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 		}
 
-		#endregion
+#endregion
 
-		#region Having
+#region Having
 
 		static readonly MethodInfo _setMethodInfo7 = MemberHelper.MethodOf(() => Having((IQueryable<int>)null!,null!)).GetGenericMethodDefinition();
 
@@ -3161,9 +3264,9 @@ namespace LinqToDB
 					currentSource.Expression, Expression.Quote(predicate)));
 		}
 
-		#endregion
+#endregion
 
-		#region IOrderedQueryable
+#region IOrderedQueryable
 
 		/// <summary>
 		/// Adds ascending sort expression to a query.
@@ -3239,9 +3342,9 @@ namespace LinqToDB
 					MethodHelper.GetMethodInfo(RemoveOrderBy, source), currentSource.Expression));
 		}
 
-		#endregion
+#endregion
 
-		#region GetContext
+#region GetContext
 
 		internal static readonly MethodInfo SetMethodInfo8 = MemberHelper.MethodOf(() => GetContext((IQueryable<int>)null!)).GetGenericMethodDefinition();
 
@@ -3264,18 +3367,18 @@ namespace LinqToDB
 					currentSource.Expression));
 		}
 
-		#endregion
+#endregion
 
-		#region Stub helpers
+#region Stub helpers
 
 		internal static TOutput AsQueryable<TOutput,TInput>(TInput source)
 		{
 			throw new InvalidOperationException();
 		}
 
-		#endregion
+#endregion
 
-		#region SqlJoin
+#region SqlJoin
 
 		/// <summary>
 		/// Defines inner or outer join between two sub-queries or tables.
@@ -3530,9 +3633,9 @@ namespace LinqToDB
 					Expression.Quote(resultSelector)));
 		}
 
-		#endregion
+#endregion
 
-		#region CTE
+#region CTE
 
 		internal static IQueryable<T> AsCte<T>(IQueryable<T> cteTable, IQueryable<T> cteBody, string? tableName)
 		{
@@ -3584,9 +3687,9 @@ namespace LinqToDB
 					currentSource.Expression, Expression.Constant(name ?? string.Empty)));
 		}
 
-		#endregion
+#endregion
 
-		#region AsQueryable
+#region AsQueryable
 
 		/// <summary>Converts a generic <see cref="IEnumerable{T}" /> to Linq To DB query.</summary>
 		/// <param name="source">A sequence to convert.</param>
@@ -3619,9 +3722,9 @@ namespace LinqToDB
 			return query;
 		}
 
-		#endregion
+#endregion
 
-		#region AsSubQuery
+#region AsSubQuery
 
 		/// <summary>
 		/// Defines that sub-query is mandatory for <paramref name="source"/> query and cannot be removed during the query optimization.
@@ -3699,9 +3802,9 @@ namespace LinqToDB
 					MethodHelper.GetMethodInfo(AsSubQuery, grouping, queryName), grouping.Expression, Expression.Constant(queryName)));
 		}
 
-		#endregion
+#endregion
 
-		#region QueryName
+#region QueryName
 
 		/// <summary>
 		/// Defines query name for specified sub-query. The query cannot be removed during the query optimization.
@@ -3742,9 +3845,9 @@ namespace LinqToDB
 					MethodHelper.GetMethodInfo(QueryName, grouping, queryName), grouping.Expression, Expression.Constant(queryName)));
 		}
 
-		#endregion
+#endregion
 
-		#region InlineParameters
+#region InlineParameters
 
 		/// <summary>
 		/// Inline parameters in query which can be converted to SQL Literal.
@@ -3766,9 +3869,9 @@ namespace LinqToDB
 					MethodHelper.GetMethodInfo(InlineParameters, source), currentSource.Expression));
 		}
 
-		#endregion
+#endregion
 
-		#region Disable Grouping Guard
+#region Disable Grouping Guard
 
 		/// <summary>
 		/// Disables grouping guard for particular <paramref name="grouping"/> query.
@@ -3790,9 +3893,9 @@ namespace LinqToDB
 		}
 
 
-		#endregion
+#endregion
 
-		#region HasUniqueKey
+#region HasUniqueKey
 
 		/// <summary>
 		/// Records unique key for IQueryable. It allows sub-query to be optimized out in LEFT JOIN if columns from sub-query are not used in final projection and predicate.
@@ -3820,9 +3923,9 @@ namespace LinqToDB
 				));
 		}
 
-		#endregion
+#endregion
 
-		#region Set operators
+#region Set operators
 
 		static Expression GetSourceExpression<TSource>(IEnumerable<TSource> source)
 		{
@@ -3890,9 +3993,9 @@ namespace LinqToDB
 				));
 		}
 
-		#endregion
+#endregion
 
-		#region Query Filters
+#region Query Filters
 
 		/// <summary>
 		/// Disables Query Filters in current query.
@@ -3915,9 +4018,9 @@ namespace LinqToDB
 					MethodHelper.GetMethodInfo(IgnoreFilters, source, entityTypes), currentSource.Expression, Expression.Constant(entityTypes)));
 		}
 
-		#endregion
+#endregion
 
-		#region Tests
+#region Tests
 
 		/// <summary>
 		/// Generates test source code for specified query.
@@ -3931,9 +4034,9 @@ namespace LinqToDB
 			return new ExpressionTestGenerator(mangleNames).GenerateSourceString(query.Expression);
 		}
 
-		#endregion
+#endregion
 
-		#region Queryable Helpers
+#region Queryable Helpers
 
 		/// <summary>
 		/// Gets or sets callback for preprocessing query before execution.
@@ -3943,9 +4046,9 @@ namespace LinqToDB
 
 		public static IExtensionsAdapter? ExtensionsAdapter { get; set; }
 
-		#endregion
+#endregion
 
-		#region Eager Loading helpers
+#region Eager Loading helpers
 
 		/// <summary>
 		/// Marks SelectQuery as Distinct.
@@ -3968,9 +4071,9 @@ namespace LinqToDB
 		}
 
 
-		#endregion;
+#endregion;
 
-		#region Tag
+#region Tag
 
 		/// <summary>
 		/// Adds a tag comment before generated query.
@@ -4024,6 +4127,6 @@ namespace LinqToDB
 			return table;
 		}
 
-		#endregion
+#endregion
 	}
 }

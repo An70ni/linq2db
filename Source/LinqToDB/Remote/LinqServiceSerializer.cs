@@ -13,6 +13,9 @@ namespace LinqToDB.Remote
 	using Extensions;
 	using Mapping;
 	using SqlQuery;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 
 	static class LinqServiceSerializer
@@ -1575,7 +1578,14 @@ namespace LinqToDB.Remote
 				foreach (var action in _actions)
 					action();
 
-				return new LinqServiceQuery { Statement = _statement, QueryHints = queryHints };
+				return new LinqServiceQuery
+				{
+					Statement = _statement,
+					QueryHints = queryHints
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				?.WrapAsIReadOnlyCollection()
+#endif
+				};
 			}
 
 			bool Parse()
@@ -2361,7 +2371,14 @@ namespace LinqToDB.Remote
 							for (var i = 0; i < rowsCount; i++)
 								rows[i] = ReadArray<ISqlExpression>()!;
 
-							obj = new SqlValuesTable(fields, null, rows);
+							obj = new SqlValuesTable(
+								fields, 
+								null,
+								rows
+#if !NATIVE_READONLY && THE_RAOT_CORE
+								.WrapAsIReadOnlyList()
+#endif
+								);
 
 							break;
 						}

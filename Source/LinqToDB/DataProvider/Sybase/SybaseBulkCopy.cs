@@ -58,11 +58,16 @@ namespace LinqToDB.DataProvider.Sybase
 			if (connections.HasValue && !table.TableOptions.HasIsTemporary())
 			{
 				// call the synchronous provider-specific implementation
-				return Task.FromResult(ProviderSpecificCopyInternal(
+				var bulkCopyRowsCopied = ProviderSpecificCopyInternal(
 					connections.Value,
 					table,
 					options,
-					(columns) => new BulkCopyReader<T>(connections.Value.DataConnection, columns, source)));
+									(columns) => new BulkCopyReader<T>(connections.Value.DataConnection, columns, source));
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+				return TaskEx.FromResult(bulkCopyRowsCopied);
+#else
+				return Task.FromResult(bulkCopyRowsCopied);
+#endif
 			}
 
 			return MultipleRowsCopyAsync(table, options, source, cancellationToken);
@@ -83,7 +88,7 @@ namespace LinqToDB.DataProvider.Sybase
 					connections.Value,
 					table,
 					options,
-					(columns) => new BulkCopyReader<T>(connections.Value.DataConnection, columns, source, cancellationToken)));
+									(columns) => new BulkCopyReader<T>(connections.Value.DataConnection, columns, source, cancellationToken)));
 			}
 
 			return MultipleRowsCopyAsync(table, options, source, cancellationToken);

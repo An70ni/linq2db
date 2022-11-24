@@ -8,6 +8,9 @@ namespace LinqToDB.DataProvider.MySql
 	using Common;
 	using Data;
 	using LinqToDB.SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class MySqlSchemaProvider : SchemaProviderBase
 	{
@@ -99,7 +102,11 @@ SELECT
 				WHERE
 					c.CONSTRAINT_TYPE   ='PRIMARY KEY' AND
 					c.CONSTRAINT_SCHEMA = database()")
-			.ToList();
+			.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)
@@ -200,7 +207,11 @@ SELECT
 				AND c.TABLE_NAME      = tc.TABLE_NAME
 	WHERE tc.CONSTRAINT_TYPE = 'FOREIGN KEY'
 		AND c.TABLE_SCHEMA   = DATABASE()")
-				.ToList();
+				.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override DataType GetDataType(string? dataType, string? columnType, int? length, int? precision, int? scale)

@@ -251,7 +251,12 @@ namespace LinqToDB.DataProvider.PostgreSQL
 
 							var reader  = Expression.Parameter(typeof(DbDataReader));
 							var ordinal = Expression.Parameter(typeof(int));
+#if NET40
+							var body    = Expression.
+								Call(typeof(DbDataReaderExtensions),nameof(DbDataReaderExtensions.GetFieldValue), new[] { npgsqlIntervalType }, reader, ordinal);
+#else
 							var body    = Expression.Call(reader, nameof(DbDataReader.GetFieldValue), new[] { npgsqlIntervalType }, ordinal);
+#endif
 
 							npgsqlIntervalReader = Expression.Lambda(body, reader, ordinal);
 						}
@@ -402,7 +407,7 @@ namespace LinqToDB.DataProvider.PostgreSQL
 			return _instance;
 		}
 
-		#region Wrappers
+#region Wrappers
 
 		[Wrapper]
 		private class NpgsqlParameter
@@ -568,7 +573,7 @@ namespace LinqToDB.DataProvider.PostgreSQL
 			internal Task<NpgsqlBinaryImporter> BeginBinaryImportAsync(string copyFromCommand, CancellationToken cancellationToken) => throw new NotImplementedException();
 		}
 
-		#region BulkCopy
+#region BulkCopy
 		[Wrapper]
 		public class NpgsqlBinaryImporter : TypeWrapper
 		{
@@ -669,7 +674,7 @@ namespace LinqToDB.DataProvider.PostgreSQL
 			public bool SupportsAsync => CompiledWrappers[5] != null && CompiledWrappers[6] != null && CompiledWrappers[7] != null && CompiledWrappers[8] != null;
 		}
 
-		#endregion
-		#endregion
+#endregion
+#endregion
 	}
 }

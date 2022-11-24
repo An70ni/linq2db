@@ -10,6 +10,9 @@ namespace LinqToDB.Configuration
 	using DataProvider;
 	using LinqToDB.Interceptors;
 	using Mapping;
+#if THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	/// <summary>
 	/// Used to build <see cref="LinqToDBConnectionOptions"/>
@@ -32,7 +35,11 @@ namespace LinqToDB.Configuration
 		public Action<TraceInfo>?                    OnTrace             { get; private set; }
 		public TraceLevel?                           TraceLevel          { get; private set; }
 		public Action<string?, string?, TraceLevel>? WriteTrace          { get; private set; }
+#if !THE_RAOT_CORE
 		public IReadOnlyList<IInterceptor>?          Interceptors        => _interceptors;
+#else
+		public IReadOnlyList<IInterceptor>? Interceptors => _interceptors?.WrapAsIReadOnlyList();
+#endif
 
 		private void CheckAssignSetupType(ConnectionSetupType type)
 		{

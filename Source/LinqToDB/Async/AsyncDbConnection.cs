@@ -54,7 +54,16 @@ namespace LinqToDB.Async
 		public virtual DbCommand CreateCommand() => Connection.CreateCommand();
 
 		public virtual void Open     ()                                    => Connection.Open();
-		public virtual Task OpenAsync(CancellationToken cancellationToken) => Connection.OpenAsync(cancellationToken);
+
+		public virtual Task OpenAsync(CancellationToken cancellationToken)
+#if NO_ASYNC && THE_RAOT_CORE
+		{
+			Open();
+			return TaskExEx.CompletedTask; 
+		}
+#else
+			=> Connection.OpenAsync(cancellationToken);
+#endif
 
 		public virtual void Close     () => Connection.Close();
 		public virtual Task CloseAsync()
@@ -63,7 +72,11 @@ namespace LinqToDB.Async
 			return Connection.CloseAsync();
 #else
 			Close();
+#if THE_RAOT_CORE
+			return TaskExEx.CompletedTask;
+#else
 			return TaskEx.CompletedTask;
+#endif
 #endif
 		}
 
@@ -71,8 +84,12 @@ namespace LinqToDB.Async
 		public virtual IAsyncDbTransaction BeginTransaction(IsolationLevel isolationLevel) => AsyncFactory.Create(Connection.BeginTransaction(isolationLevel));
 
 #if !NATIVE_ASYNC
-			public virtual Task<IAsyncDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
-				=> Task.FromResult(BeginTransaction());
+				public virtual Task<IAsyncDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
+#if THE_RAOT_CORE
+					=> TaskEx.FromResult(BeginTransaction());
+#else
+					=> Task.FromResult(BeginTransaction());
+#endif
 #elif !NETSTANDARD2_1PLUS
 		public virtual ValueTask<IAsyncDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
 			=> new(BeginTransaction());
@@ -86,8 +103,12 @@ namespace LinqToDB.Async
 #endif
 
 #if !NATIVE_ASYNC
-			public virtual Task<IAsyncDbTransaction> BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+		public virtual Task<IAsyncDbTransaction> BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+#if THE_RAOT_CORE
+				=> TaskEx.FromResult(BeginTransaction(isolationLevel));
+#else
 				=> Task.FromResult(BeginTransaction(isolationLevel));
+#endif
 #elif !NETSTANDARD2_1PLUS
 		public virtual ValueTask<IAsyncDbTransaction> BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
 			=> new(BeginTransaction(isolationLevel));
@@ -100,12 +121,12 @@ namespace LinqToDB.Async
 		}
 #endif
 
-		#region IDisposable
+#region IDisposable
 		public virtual void Dispose() => Connection.Dispose();
-		#endregion
+#endregion
 
-		#region IAsyncDisposable
-#if !NATIVE_ASYNC
+#region IAsyncDisposable
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 		public virtual Task DisposeAsync()
 		{
 			Dispose();
@@ -114,13 +135,15 @@ namespace LinqToDB.Async
 #else
 		public virtual ValueTask DisposeAsync()
 		{
+#if NATIVE_ASYNC
 			if (Connection is IAsyncDisposable asyncDisposable)
 				return asyncDisposable.DisposeAsync();
+#endif
 
 			Dispose();
 			return default;
 		}
 #endif
-		#endregion
-	}
+#endregion
+}
 }

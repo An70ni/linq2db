@@ -73,7 +73,7 @@ namespace LinqToDB.Data
 				ReaderWrapper = null;
 			}
 		}
-#elif NATIVE_ASYNC
+#elif NATIVE_ASYNC || THE_RAOT_CORE
 		public ValueTask DisposeAsync()
 		{
 			Dispose();

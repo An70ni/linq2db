@@ -10,6 +10,11 @@ namespace LinqToDB.DataProvider.ClickHouse
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using LinqToDB.Compatibility.System.Collections;
+	using System.Collections.ObjectModel;
+	using Theraot.Collections;
+#endif
 
 	// 1. Foregign keys and procedures: not supported by ClickHouse
 	// 2. Functions and table functions: we can get only name from ClickHouse (no parameters information) so it is useless
@@ -67,7 +72,12 @@ WHERE database = database() and default_kind <> 'ALIAS'")
 				.ToList();
 		}
 
-		protected override IReadOnlyCollection<ForeignKeyInfo> GetForeignKeys(DataConnection dataConnection, IEnumerable<TableSchema> tables, GetSchemaOptions options) => Array<ForeignKeyInfo>.Empty;
+		protected override IReadOnlyCollection<ForeignKeyInfo> GetForeignKeys(DataConnection dataConnection, IEnumerable<TableSchema> tables, GetSchemaOptions options) => 
+			Array<ForeignKeyInfo>.Empty
+#if !NATIVE_READONLY && THE_RAOT_CORE
+									.WrapAsIReadOnlyCollection()
+#endif
+					;
 
 		protected override IReadOnlyCollection<PrimaryKeyInfo> GetPrimaryKeys(DataConnection dataConnection, IEnumerable<TableSchema> tables, GetSchemaOptions options)
 		{
@@ -87,7 +97,11 @@ WHERE database = database() and default_kind <> 'ALIAS'")
 					});
 				},
 				"select name, primary_key from system.tables where is_temporary = 0 and database = database() and primary_key <> ''")
-				.SelectMany(_ => _).ToList();
+				.SelectMany(_ => _).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+										.WrapAsIReadOnlyCollection()
+#endif
+					;
 		}
 
 		protected override List<TableInfo> GetTables(DataConnection dataConnection, GetSchemaOptions options)
@@ -204,7 +218,8 @@ WHERE database = database() and default_kind <> 'ALIAS'")
 		}
 
 		// contains only types with fixed name
-		private static readonly IReadOnlyDictionary<string, (DataType dataType, Type type)> _typeMap = new Dictionary<string, (DataType dataType, Type type)>()
+		private static readonly IReadOnlyDictionary<string, (DataType dataType, Type type)> _typeMap =
+			new Dictionary<string, (DataType dataType, Type type)>()
 		{
 			// also could store binary data
 			{ "String"    , (DataType.NVarChar  , typeof(string        )) },
@@ -230,7 +245,11 @@ WHERE database = database() and default_kind <> 'ALIAS'")
 			{ "UInt256"   , (DataType.UInt256   , typeof(BigInteger    )) },
 			{ "Float32"   , (DataType.Single    , typeof(float         )) },
 			{ "Float64"   , (DataType.Double    , typeof(double        )) },
-		};
+		}
+#if !NATIVE_READONLY
+				.AsReadOnlyDictionary()
+#endif
+			;
 		#endregion
 	}
 }

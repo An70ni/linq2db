@@ -318,8 +318,11 @@ namespace LinqToDB
 
 			if (query is IQueryProviderAsync queryAsync)
 				return queryAsync.ExecuteAsync<int>(expr, token);
-
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return TaskEx.Run(() => query.Provider.Execute<int>(expr), token);
+#else
 			return Task.Run(() => query.Provider.Execute<int>(expr), token);
+#endif
 		}
 
 		/// <summary>
@@ -405,8 +408,11 @@ namespace LinqToDB
 
 			if (query is IQueryProviderAsync queryAsync)
 				return queryAsync.ExecuteAsync<int>(expr, token);
-
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return TaskEx.Run(() => query.Provider.Execute<int>(expr), token);
+#else
 			return Task.Run(() => query.Provider.Execute<int>(expr), token);
+#endif
 		}
 
 
@@ -669,7 +675,11 @@ namespace LinqToDB
 			if (source is IQueryProviderAsync queryAsync)
 				return queryAsync.ExecuteAsync<int>(expr, token);
 
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return TaskEx.Run(() => source.Provider.Execute<int>(expr), token);
+#else
 			return Task.Run(() => source.Provider.Execute<int>(expr), token);
+#endif
 		}
 
 		/// <summary>
@@ -766,7 +776,11 @@ namespace LinqToDB
 			if (currentSource is IQueryProviderAsync queryAsync)
 				return queryAsync.ExecuteAsync<int>(expr, token);
 
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return TaskEx.Run(() => currentSource.Provider.Execute<int>(expr), token);
+#else
 			return Task.Run(() => currentSource.Provider.Execute<int>(expr), token);
+#endif
 		}
 
 		/// <summary>
@@ -903,7 +917,11 @@ namespace LinqToDB
 			if (query is IQueryProviderAsync queryAsync)
 				return queryAsync.ExecuteAsync<int>(expr, token);
 
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return TaskEx.Run(() => query.Provider.Execute<int>(expr), token);
+#else
 			return Task.Run(() => query.Provider.Execute<int>(expr), token);
+#endif
 		}
 
 		#endregion

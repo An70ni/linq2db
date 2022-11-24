@@ -14,6 +14,9 @@ namespace LinqToDB.Linq.Builder
 	using Mapping;
 	using SqlQuery;
 	using Reflection;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	[DebuggerDisplay("{BuildContextDebuggingHelper.GetContextInfo(this)}")]
 	class EnumerableContext : IBuildContext
@@ -69,7 +72,14 @@ namespace LinqToDB.Linq.Builder
 					rows.Add(new[] { Builder.ConvertToSql(Parent, e) });
 
 				var field = new SqlField(Table, "item");
-				return new SqlValuesTable(new[] { field }, null, rows);
+				return new SqlValuesTable(
+					new[] { field },
+					null,
+					rows
+#if !NATIVE_READONLY && THE_RAOT_CORE
+					.WrapAsIReadOnlyList()
+#endif
+					);
 			}
 
 
@@ -141,7 +151,14 @@ namespace LinqToDB.Linq.Builder
 				fields[index]        = field;
 			}
 
-			return new SqlValuesTable(fields, columnsInfo.Select(static ci => ci.Member).ToArray(), builtRows);
+			return new SqlValuesTable(
+				fields, 
+				columnsInfo.Select(static ci => ci.Member).ToArray(), 
+				builtRows
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyList()
+#endif
+				);
 		}
 
 		public void BuildQuery<T>(Query<T> query, ParameterExpression queryParameter)

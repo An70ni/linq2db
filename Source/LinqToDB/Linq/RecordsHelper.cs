@@ -71,7 +71,7 @@ namespace LinqToDB.Linq
 
 		public static int GetFSharpRecordMemberSequence(MappingSchema mappingSchema, Type objectType, MemberInfo memberInfo)
 		{
-#if NET45 || NET46 || NETSTANDARD2_0
+#if NET40 || NET45 || NET46 || NETSTANDARD2_0
 			return _fsharpRecordMemberCache.GetOrAdd(memberInfo, memberInfo =>
 			{
 #else
@@ -91,7 +91,7 @@ namespace LinqToDB.Linq
 				}
 
 				return -1;
-#if NET45 || NET46 || NETSTANDARD2_0
+#if NET40 || NET45 || NET46 || NETSTANDARD2_0
 			});
 #else
 			}, (mappingSchema, objectType));

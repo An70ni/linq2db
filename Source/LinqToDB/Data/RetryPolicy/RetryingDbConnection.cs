@@ -32,7 +32,7 @@ namespace LinqToDB.Data.RetryPolicy
 		#endregion
 
 		#region IAsyncDisposable
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		ValueTask IAsyncDisposable.DisposeAsync() => _connection.DisposeAsync();
 #else
 		Task IAsyncDisposable.DisposeAsync() => _connection.DisposeAsync();

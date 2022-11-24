@@ -1,4 +1,4 @@
-﻿#if !NATIVE_ASYNC
+﻿#if !NATIVE_ASYNC && !THE_RAOT_CORE
 using System;
 using System.Threading;
 using System.Threading.Tasks;

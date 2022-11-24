@@ -7,6 +7,9 @@ namespace LinqToDB.DataProvider.Informix
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class InformixSchemaProvider : SchemaProviderBase
 	{
@@ -174,7 +177,11 @@ namespace LinqToDB.DataProvider.Informix
 					ColumnName     = c.c,
 					Ordinal        = c.i
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		static void SetDate(ColumnInfo c, int num)
@@ -473,7 +480,11 @@ namespace LinqToDB.DataProvider.Informix
 					OtherColumn  = c.c[1],
 					Ordinal      = c.i
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 	}
 }

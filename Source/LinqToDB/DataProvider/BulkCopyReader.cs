@@ -17,7 +17,11 @@ namespace LinqToDB.DataProvider
 	using Common;
 	using Data;
 	using Mapping;
-
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using LinqToDB.Compatibility.System.Collections;
+	using System.Collections.ObjectModel;
+	using Theraot.Collections;
+#endif
 	public class BulkCopyReader<T> : BulkCopyReader, IAsyncDisposable
 	{
 		readonly IEnumerator<T>?      _enumerator;
@@ -86,6 +90,12 @@ namespace LinqToDB.DataProvider
 		{
 			return _asyncEnumerator?.DisposeAsync() ?? default;
 		}
+#elif THE_RAOT_CORE
+		public ValueTask DisposeAsync()
+		{
+			Dispose(true);
+			return default;
+		}
 #else
 		public Task DisposeAsync()
 		{
@@ -119,7 +129,11 @@ namespace LinqToDB.DataProvider
 			_dataConnection = dataConnection;
 			_columns        = columns;
 			_columnTypes    = _columns.Select(c => c.GetConvertedDbDataType()).ToArray();
-			_ordinals       = _columns.Select((c, i) => new { c, i }).ToDictionary(_ => _.c.ColumnName, _ => _.i);
+			_ordinals       = _columns.Select((c, i) => new { c, i }).ToDictionary(_ => _.c.ColumnName, _ => _.i)
+#if !NATIVE_READONLY && THE_RAOT_CORE
+																		.AsReadOnlyDictionary()
+#endif
+				;
 		}
 
 		public class Parameter : DbParameter

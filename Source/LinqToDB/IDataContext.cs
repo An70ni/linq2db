@@ -18,7 +18,7 @@ namespace LinqToDB
 	/// </summary>
 	[PublicAPI]
 	public interface IDataContext : IDisposable
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		, IAsyncDisposable
 #else
 		, Async.IAsyncDisposable

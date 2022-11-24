@@ -40,11 +40,17 @@ namespace LinqToDB.Async
 
 		/// <inheritdoc cref="DbConnection.Open"/>
 		void Open();
+
+#if NO_ASYNC
+		/// <inheritdoc cref="DbConnection.Open()"/>
+#else
 		/// <inheritdoc cref="DbConnection.OpenAsync(CancellationToken)"/>
+#endif
 		Task OpenAsync(CancellationToken cancellationToken);
 
 		/// <inheritdoc cref="DbConnection.Close"/>
 		void Close();
+
 		/// <summary>
 		/// Closes current connection asynchonously.
 		/// </summary>

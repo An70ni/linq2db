@@ -9,6 +9,9 @@ namespace LinqToDB.DataProvider.SapHana
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class SapHanaOdbcSchemaProvider : SapHanaSchemaProvider
 	{
@@ -79,7 +82,11 @@ namespace LinqToDB.DataProvider.SapHana
 					COLUMN_NAME,
 					POSITION
 				FROM INDEX_COLUMNS")
-				.Where(x => x != null).ToList()!;
+				.Where(x => x != null).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				!;
 		}
 	}
 }

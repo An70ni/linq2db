@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace LinqToDB.Linq
 {
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 	using Async;
 #endif
 	using Builder;
@@ -23,6 +23,10 @@ namespace LinqToDB.Linq
 	using Mapping;
 	using SqlProvider;
 	using SqlQuery;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using LinqToDB.Compatibility.System.Collections;
+	using Theraot.Collections;
+#endif
 
 	public abstract class Query
 	{
@@ -33,7 +37,11 @@ namespace LinqToDB.Linq
 
 		internal readonly List<QueryInfo> Queries = new (1);
 
-		public IReadOnlyCollection<QueryInfo> GetQueries() => Queries;
+		public IReadOnlyCollection<QueryInfo> GetQueries() => Queries
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 
 		internal abstract void Init(IBuildContext parseContext, List<ParameterAccessor> sqlParameters);
 
@@ -72,7 +80,22 @@ namespace LinqToDB.Linq
 				InlineParameters        == dataContext.InlineParameters                                                 &&
 				ContextType             == dataContext.GetType()                                                        &&
 				IsEntityServiceProvided == dataContext is IInterceptable<IEntityServiceInterceptor> { Interceptor: {} } &&
-				Expression!.EqualsTo(expr, dataContext, _queryableAccessorDic, _queryableMemberAccessorDic, _queryDependedObjects);
+				Expression!.EqualsTo(
+					expr,
+					dataContext,
+					_queryableAccessorDic
+#if !NATIVE_READONLY
+				.AsReadOnlyDictionary()
+#endif
+				, _queryableMemberAccessorDic
+#if !NATIVE_READONLY
+				?.AsReadOnlyDictionary()
+#endif
+				, _queryDependedObjects
+#if !NATIVE_READONLY
+				.AsReadOnlyDictionary()
+#endif				
+				);
 		}
 
 		readonly Dictionary<Expression, QueryableAccessor>        _queryableAccessorDic  = new();

@@ -398,7 +398,7 @@ namespace LinqToDB.Remote
 			((IDataContext)this).Close();
 		}
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 		public virtual Task DisposeAsync()
 		{
 			Disposed = true;

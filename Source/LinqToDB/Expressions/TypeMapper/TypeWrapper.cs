@@ -68,7 +68,11 @@ namespace LinqToDB.Expressions
 			return Expression.Lambda<Action<TI, TP>>(
 				Expression.Call(
 					pThis,
+#if !NET40
 					pi.SetMethod!,
+#else
+					pi.GetSetMethod()!,
+#endif
 					pValue),
 				pThis, pValue);
 		}

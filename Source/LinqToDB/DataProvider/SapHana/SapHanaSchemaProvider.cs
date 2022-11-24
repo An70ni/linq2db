@@ -9,6 +9,9 @@ namespace LinqToDB.DataProvider.SapHana
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class SapHanaSchemaProvider : SchemaProviderBase
 	{
@@ -174,7 +177,11 @@ namespace LinqToDB.DataProvider.SapHana
 					ColumnName     = pk.Field<string>("COLUMN_NAME")!,
 					Ordinal        = Converter.ChangeTypeTo<int>(pk["POSITION"]),
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)
@@ -263,7 +270,11 @@ namespace LinqToDB.DataProvider.SapHana
 			IEnumerable<TableSchema> tables, GetSchemaOptions options)
 		{
 			if (SchemasFilter == null)
-				return new List<ForeignKeyInfo>();
+				return new List<ForeignKeyInfo>()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 
 			return dataConnection.Query<ForeignKeyInfo>(@"
 				SELECT
@@ -274,7 +285,11 @@ namespace LinqToDB.DataProvider.SapHana
 					REFERENCED_COLUMN_NAME AS ""OtherColumn"",
 					POSITION AS ""Ordinal""
 				FROM REFERENTIAL_CONSTRAINTS
-				WHERE SCHEMA_NAME " + SchemasFilter).ToList();
+				WHERE SCHEMA_NAME " + SchemasFilter).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ProcedureInfo>? GetProcedures(DataConnection dataConnection, GetSchemaOptions options)

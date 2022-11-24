@@ -5,6 +5,9 @@ using System.Linq;
 namespace LinqToDB.SqlQuery
 {
 	using Common;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public class AliasesContext
 	{
@@ -31,7 +34,11 @@ namespace LinqToDB.SqlQuery
 		public IReadOnlyCollection<IQueryElement> GetAliased()
 #endif
 		{
-			return _aliasesSet;
+			return _aliasesSet
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		public HashSet<string> GetUsedTableAliases()

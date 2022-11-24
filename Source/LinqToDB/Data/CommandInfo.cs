@@ -749,7 +749,7 @@ namespace LinqToDB.Data
 			{
 			}
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 			public Task DisposeAsync() => TaskEx.CompletedTask;
 #else
 			public ValueTask DisposeAsync() => default;
@@ -757,7 +757,7 @@ namespace LinqToDB.Data
 
 			public T Current { get; private set; } = default!;
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 			public async Task<bool> MoveNextAsync()
 #else
 			public async ValueTask<bool> MoveNextAsync()
@@ -1334,7 +1334,7 @@ namespace LinqToDB.Data
 
 				if (parameter.Direction != null) p.Direction =       parameter.Direction.Value;
 				if (parameter.Size      != null) p.Size      =       parameter.Size     .Value;
-#if NET45
+#if NET45 || NET40
 #pragma warning disable RS0030 // API missing from DbParameter in NET 4.5
 				if (parameter.Precision != null) ((IDbDataParameter)p).Precision = (byte)parameter.Precision.Value;
 				if (parameter.Scale     != null) ((IDbDataParameter)p).Scale     = (byte)parameter.Scale    .Value;

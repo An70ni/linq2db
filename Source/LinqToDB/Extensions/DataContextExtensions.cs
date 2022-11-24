@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+using Theraot.Collections;
+#endif
 
 namespace LinqToDB
 {
@@ -14,7 +17,11 @@ namespace LinqToDB
 				// it is safe to use existing collection as optimization as we don't save and/or use returned collection
 				// after command execution
 				if (context.NextQueryHints.Count == 0)
-					return context.QueryHints;
+					return context.QueryHints
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 
 				var queryHints = new List<string>(context.QueryHints.Count + context.NextQueryHints.Count);
 				queryHints.AddRange(context.QueryHints);
@@ -23,7 +30,11 @@ namespace LinqToDB
 				if (clearNextHints)
 					context.NextQueryHints.Clear();
 
-				return queryHints;
+				return queryHints
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 			}
 
 			return null;

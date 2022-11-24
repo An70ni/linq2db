@@ -8,7 +8,7 @@ namespace LinqToDB.Linq
 	using Data;
 
 	public interface IQueryRunner: IDisposable
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		, IAsyncDisposable
 #else
 		, Async.IAsyncDisposable

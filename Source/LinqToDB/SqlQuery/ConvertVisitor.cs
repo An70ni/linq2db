@@ -8,6 +8,9 @@ using LinqToDB.Remote;
 namespace LinqToDB.SqlQuery
 {
 	using Linq.Builder;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public class ConvertVisitor<TContext>
 	{
@@ -1189,7 +1192,14 @@ namespace LinqToDB.SqlQuery
 									AddVisited(field, newField);
 								}
 
-								newElement = new SqlValuesTable(table.Source!, table.ValueBuilders!, newFields, rowsConverted ? convertedRows : table.Rows);
+								newElement = new SqlValuesTable(table.Source!, table.ValueBuilders!, newFields,
+									rowsConverted ?
+#if NATIVE_READONLY || !THE_RAOT_CORE
+									convertedRows : table.Rows
+#else
+									convertedRows?.WrapAsIReadOnlyList()??null : table.Rows
+#endif
+									);
 							}
 						}
 

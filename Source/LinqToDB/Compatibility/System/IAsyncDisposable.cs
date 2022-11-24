@@ -1,4 +1,4 @@
-﻿#if !NATIVE_ASYNC
+﻿#if !NATIVE_ASYNC && !THE_RAOT_CORE
 namespace System
 {
 	// Magic (see https://github.com/dotnet/roslyn/issues/45111)

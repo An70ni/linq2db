@@ -4,6 +4,9 @@ using System.Linq;
 namespace LinqToDB.DataProvider.ClickHouse
 {
 	using Common;
+#if !NATIVE_READONLY
+	using LinqToDB.Compatibility.System.Collections;
+#endif
 	using Mapping;
 	using SqlProvider;
 	using SqlQuery;
@@ -411,7 +414,11 @@ namespace LinqToDB.DataProvider.ClickHouse
 
 			{ DataType.IPv4      , "toIPv4"       },
 			{ DataType.IPv6      , "toIPv6"       },
-		};
+		}
+#if !NATIVE_READONLY
+				.AsReadOnlyDictionary()
+#endif
+				;
 
 		#endregion
 	}

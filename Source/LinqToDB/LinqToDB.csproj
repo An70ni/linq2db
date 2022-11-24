@@ -18,10 +18,14 @@
 	</PropertyGroup>
 	
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
-		<DefineConstants>THE_RAOT_CORE;$(DefineConstants)</DefineConstants>
+		<DefineConstants>THE_RAOT_CORE;NO_ASYNC;$(DefineConstants)</DefineConstants>
 	</PropertyGroup>
 	
-	<PropertyGroup Condition=" '$(TargetFramework)' != 'net45' AND '$(TargetFramework)' != 'net46' ">
+	<PropertyGroup Condition=" '$(TargetFramework)' != 'net40' ">
+		<DefineConstants>NATIVE_READONLY;$(DefineConstants)</DefineConstants>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition=" '$(TargetFramework)' != 'net45' AND '$(TargetFramework)' != 'net46' AND '$(TargetFramework)' != 'net40' ">
 		<DefineConstants>NATIVE_ASYNC;$(DefineConstants)</DefineConstants>
 	</PropertyGroup>
 
@@ -103,7 +107,7 @@
 	</ItemGroup>	
 		
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
-		<PackageReference Include="Theraot.Core"/>
+		<PackageReference Include="Theraot.Core" />
 		<Reference Include="Microsoft.CSharp" />
 		<Reference Include="System.Configuration" />
 		<Reference Include="System.Data.DataSetExtensions" />
@@ -136,5 +140,9 @@
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1' ">
 		<PackageReference Include="Microsoft.CSharp" />
 		<PackageReference Include="System.ComponentModel.Annotations" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Compatibility\System\Reflection\" />
 	</ItemGroup>
 </Project>

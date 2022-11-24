@@ -71,22 +71,36 @@ namespace LinqToDB.DataProvider.Informix
 				{
 					// call the synchronous provider-specific implementation
 					if (_provider.Adapter.InformixBulkCopy != null)
-						return Task.FromResult(IDSProviderSpecificCopy(
-							table,
-							options,
-							source,
-							dataConnection,
-							connection,
-							_provider.Adapter.InformixBulkCopy));
+					{
+						var bulkCopyRowsCopied = IDSProviderSpecificCopy(
+												table,
+												options,
+												source,
+												dataConnection,
+												connection,
+												_provider.Adapter.InformixBulkCopy);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+						return TaskEx.FromResult(bulkCopyRowsCopied);
+#else
+						return Task.FromResult(bulkCopyRowsCopied);
+#endif
+					}
 					else
-						return Task.FromResult(DB2.DB2BulkCopy.ProviderSpecificCopyImpl(
-							table,
-							options,
-							source,
-							dataConnection,
-							connection,
-							_provider.Adapter.DB2BulkCopy!,
-							TraceAction));
+					{
+						var bulkCopyRowsCopied = DB2.DB2BulkCopy.ProviderSpecificCopyImpl(
+												table,
+												options,
+												source,
+												dataConnection,
+												connection,
+												_provider.Adapter.DB2BulkCopy!,
+												TraceAction);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+						return TaskEx.FromResult(bulkCopyRowsCopied);
+#else
+						return Task.FromResult(bulkCopyRowsCopied);
+#endif
+					}
 				}
 			}
 

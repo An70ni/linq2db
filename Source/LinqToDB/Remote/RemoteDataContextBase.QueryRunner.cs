@@ -13,7 +13,7 @@ namespace LinqToDB.Remote
 	using LinqToDB.Data;
 	using SqlProvider;
 	using SqlQuery;
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 	using Tools;
 #endif
 
@@ -146,7 +146,11 @@ namespace LinqToDB.Remote
 			}
 
 #if !NATIVE_ASYNC
+#if THE_RAOT_CORE
+			public override async ValueTask DisposeAsync()
+#else
 			public override async Task DisposeAsync()
+#endif
 			{
 				if (_client is IDisposable disposable)
 					disposable.Dispose();
@@ -295,7 +299,7 @@ namespace LinqToDB.Remote
 					DataReader.Dispose();
 				}
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 				public Task DisposeAsync()
 				{
 					DataReader.Dispose();

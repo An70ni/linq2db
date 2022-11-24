@@ -130,7 +130,7 @@ namespace LinqToDB.Async
 			// Availability:
 			// - DbTransaction (netstandard2.1, netcoreapp3.0)
 			// - Npgsql 4.1.2+
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 			var disposeAsync  = CreateDelegate<Func<DbTransaction               ,      Task>, DbTransaction>(type, "DisposeAsync" , Array<Type>.Empty, Array<Type>.Empty, Array<Type>.Empty, true , false)
 #else
 			var disposeAsync  = CreateDelegate<Func<DbTransaction               , ValueTask>, DbTransaction>(type, "DisposeAsync" , Array<Type>.Empty, Array<Type>.Empty, Array<Type>.Empty, true , true )
@@ -138,7 +138,7 @@ namespace LinqToDB.Async
 			// Task DisposeAsync()
 			// Availability:
 			// - MySqlConnector 0.57+
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 							 ?? CreateDelegate<Func<DbTransaction               ,      Task>, DbTransaction>(type, "DisposeAsync" , Array<Type>.Empty, Array<Type>.Empty, Array<Type>.Empty, false, false);
 #else
 							 ?? CreateDelegate<Func<DbTransaction               , ValueTask>, DbTransaction>(type, "DisposeAsync" , Array<Type>.Empty, Array<Type>.Empty, Array<Type>.Empty, false, true );
@@ -219,7 +219,7 @@ namespace LinqToDB.Async
 			// Availability:
 			// - (stub) DbConnection (netstandard2.1, netcoreapp3.0)
 			// - Npgsql 4.1.2+
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 			var disposeAsync            = CreateDelegate<Func<DbConnection, Task     >, DbConnection>(type, "DisposeAsync", Array<Type>.Empty, Array<Type>.Empty, Array<Type>.Empty, true , false)
 #else
 			var disposeAsync            = CreateDelegate<Func<DbConnection, ValueTask>, DbConnection>(type, "DisposeAsync", Array<Type>.Empty, Array<Type>.Empty, Array<Type>.Empty, true , true)
@@ -227,7 +227,7 @@ namespace LinqToDB.Async
 			// Task DisposeAsync()
 			// Availability:
 			// - MySqlConnector 0.57+
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC  && !THE_RAOT_CORE
 									   ?? CreateDelegate<Func<DbConnection,      Task>, DbConnection>(type, "DisposeAsync", Array<Type>.Empty, Array<Type>.Empty, Array<Type>.Empty, false, false);
 #else
 									   ?? CreateDelegate<Func<DbConnection, ValueTask>, DbConnection>(type, "DisposeAsync", Array<Type>.Empty, Array<Type>.Empty, Array<Type>.Empty, false, true);

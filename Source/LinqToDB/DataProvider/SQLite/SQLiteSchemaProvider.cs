@@ -8,6 +8,9 @@ namespace LinqToDB.DataProvider.SQLite
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class SQLiteSchemaProvider : SchemaProviderBase
 	{
@@ -88,7 +91,11 @@ namespace LinqToDB.DataProvider.SQLite
 					ColumnName     = pk.Field<string>("COLUMN_NAME")!,
 					Ordinal        = pk.Field<int>   ("ORDINAL_POSITION"),
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+			.WrapAsIReadOnlyCollection()
+#endif
+			;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)
@@ -150,7 +157,12 @@ namespace LinqToDB.DataProvider.SQLite
 						f.OtherColumn = pks[k];
 				}
 			}
-			return result;
+
+			return result
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override string GetDatabaseName(DataConnection dbConnection)

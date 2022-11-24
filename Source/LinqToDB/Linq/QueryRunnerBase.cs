@@ -44,7 +44,7 @@ namespace LinqToDB.Linq
 				DataContext.Close();
 		}
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 		public virtual Task DisposeAsync()
 		{
 			if (DataContext.CloseAfterUse)

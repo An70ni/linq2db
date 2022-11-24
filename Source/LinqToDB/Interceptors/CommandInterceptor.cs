@@ -13,17 +13,37 @@ namespace LinqToDB.Interceptors
 		public virtual DbCommand                  CommandInitialized      (CommandEventData eventData, DbCommand command) => command;
 
 		public virtual Option<int>                ExecuteNonQuery         (CommandEventData eventData, DbCommand command, Option<int> result) => result;
-		public virtual Task<Option<int>>          ExecuteNonQueryAsync    (CommandEventData eventData, DbCommand command, Option<int> result, CancellationToken cancellationToken) => Task.FromResult(result);
+		public virtual Task<Option<int>>          ExecuteNonQueryAsync    (CommandEventData eventData, DbCommand command, Option<int> result, CancellationToken cancellationToken) =>
+#if NATIVE_ASYNC || !THE_RAOT_CORE
+			Task.FromResult(result);
+#else
+			TaskEx.FromResult(result);
+#endif
 
 		public virtual Option<DbDataReader>       ExecuteReader           (CommandEventData eventData, DbCommand command, CommandBehavior commandBehavior, Option<DbDataReader> result) => result;
-		public virtual Task<Option<DbDataReader>> ExecuteReaderAsync      (CommandEventData eventData, DbCommand command, CommandBehavior commandBehavior, Option<DbDataReader> result, CancellationToken cancellationToken) => Task.FromResult(result);
+		public virtual Task<Option<DbDataReader>> ExecuteReaderAsync      (CommandEventData eventData, DbCommand command, CommandBehavior commandBehavior, Option<DbDataReader> result, CancellationToken cancellationToken) =>
+#if NATIVE_ASYNC || !THE_RAOT_CORE
+			Task.FromResult(result);
+#else
+			TaskEx.FromResult(result);
+#endif
 
 		public virtual void                       AfterExecuteReader      (CommandEventData eventData, DbCommand command, CommandBehavior commandBehavior, DbDataReader dataReader) {}
 
 		public virtual Option<object?>            ExecuteScalar           (CommandEventData eventData, DbCommand command, Option<object?> result) => result;
-		public virtual Task<Option<object?>>      ExecuteScalarAsync      (CommandEventData eventData, DbCommand command, Option<object?> result, CancellationToken cancellationToken) => Task.FromResult(result);
+		public virtual Task<Option<object?>>      ExecuteScalarAsync      (CommandEventData eventData, DbCommand command, Option<object?> result, CancellationToken cancellationToken) =>
+#if NATIVE_ASYNC || !THE_RAOT_CORE
+			Task.FromResult(result);
+#else
+			TaskEx.FromResult(result);
+#endif
 
 		public virtual void                       BeforeReaderDispose     (CommandEventData eventData, DbCommand? command, DbDataReader dataReader) { }
-		public virtual Task                       BeforeReaderDisposeAsync(CommandEventData eventData, DbCommand? command, DbDataReader dataReader) => TaskEx.CompletedTask;
+		public virtual Task                       BeforeReaderDisposeAsync(CommandEventData eventData, DbCommand? command, DbDataReader dataReader) =>
+#if !THE_RAOT_CORE
+			TaskEx.CompletedTask;
+#else
+			TaskExEx.CompletedTask;
+#endif
 	}
 }

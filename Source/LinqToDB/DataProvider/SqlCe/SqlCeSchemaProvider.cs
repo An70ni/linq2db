@@ -36,6 +36,9 @@ namespace LinqToDB.DataProvider.SqlCe
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class SqlCeSchemaProvider : SchemaProviderBase
 	{
@@ -75,7 +78,11 @@ SELECT
 FROM INFORMATION_SCHEMA.INDEXES
 WHERE PRIMARY_KEY = 1");
 
-			return data.ToList();
+			return data.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)
@@ -116,7 +123,11 @@ FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
 INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE tc ON tc.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
 INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE oc ON oc.CONSTRAINT_NAME = rc.UNIQUE_CONSTRAINT_NAME");
 
-			return data.ToList();
+			return data.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override string GetDatabaseName(DataConnection dbConnection)

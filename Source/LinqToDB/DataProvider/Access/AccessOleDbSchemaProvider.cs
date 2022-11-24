@@ -9,6 +9,9 @@ namespace LinqToDB.DataProvider.Access
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class AccessOleDbSchemaProvider : AccessSchemaProviderBase
 	{
@@ -42,7 +45,11 @@ namespace LinqToDB.DataProvider.Access
 		{
 			var connection = _provider.TryGetProviderConnection(dataConnection, dataConnection.Connection);
 			if (connection == null)
-				return Array<ForeignKeyInfo>.Empty;
+				return Array<ForeignKeyInfo>.Empty
+#if !NATIVE_READONLY && THE_RAOT_CORE
+											.WrapAsIReadOnlyCollection()
+#endif
+					;
 
 			// this method (GetOleDbSchemaTable) could crash application hard with AV:
 			// https://github.com/linq2db/linq2db.LINQPad/issues/23
@@ -60,7 +67,11 @@ namespace LinqToDB.DataProvider.Access
 					Ordinal      = ConvertTo<int>.From(fk.Field<long>("ORDINAL")),
 				};
 
-			return q.ToList();
+			return q.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyCollection()
+#endif
+					;
 		}
 
 		protected override List<TableInfo> GetTables(DataConnection dataConnection, GetSchemaOptions options)
@@ -105,7 +116,11 @@ namespace LinqToDB.DataProvider.Access
 					ColumnName     = idx.Field<string>("COLUMN_NAME")!,
 					Ordinal        = ConvertTo<int>.From(idx["ORDINAL_POSITION"]),
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+					.WrapAsIReadOnlyCollection()
+#endif
+					;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)

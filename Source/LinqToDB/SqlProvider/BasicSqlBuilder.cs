@@ -18,6 +18,9 @@ namespace LinqToDB.SqlProvider
 	using Mapping;
 	using SqlQuery;
 	using Extensions;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public abstract partial class BasicSqlBuilder : ISqlBuilder
 	{
@@ -867,7 +870,12 @@ namespace LinqToDB.SqlProvider
 
 				if (output.OutputColumns != null)
 				{
-					BuildOutputColumnExpressions(output.OutputColumns);
+					BuildOutputColumnExpressions(
+						output.OutputColumns
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+						);
 				}
 
 				if (output.OutputTable != null)
@@ -1650,7 +1658,12 @@ namespace LinqToDB.SqlProvider
 							.ToArray();
 					}
 
-					BuildFormatValues(IdentText(rawSqlTable.SQL, multiLine ? Indent + 1 : 0), parameters, () => Precedence.Primary);
+					BuildFormatValues(IdentText(rawSqlTable.SQL, multiLine ? Indent + 1 : 0),
+						parameters
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+							, () => Precedence.Primary);
 
 					if (multiLine)
 						StringBuilder.AppendLine();
@@ -1741,7 +1754,12 @@ namespace LinqToDB.SqlProvider
 				if (i > 0)
 					StringBuilder.Append(InlineComma);
 				var field = valuesTable.Fields[i];
-				if (IsSqlValuesTableValueTypeRequired(valuesTable, Array<ISqlExpression[]>.Empty, -1, i))
+				if (IsSqlValuesTableValueTypeRequired(valuesTable,
+					Array<ISqlExpression[]>.Empty
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					, -1, i))
 					BuildTypedExpression(new SqlDataType(field), new SqlValue(field.Type, null));
 				else
 					BuildExpression(new SqlValue(field.Type, null));
@@ -2846,7 +2864,12 @@ namespace LinqToDB.SqlProvider
 					{
 						var e = (SqlExpression)expr;
 
-						BuildFormatValues(e.Expr, e.Parameters, () => GetPrecedence(e));
+						BuildFormatValues(e.Expr, 
+							e.Parameters
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+							, () => GetPrecedence(e));
 					}
 
 					break;
@@ -3548,7 +3571,7 @@ namespace LinqToDB.SqlProvider
 					if (t1.IndexOf('(') < 0)
 						sb.Append('(').Append(parameter.Size).Append(')');
 				}
-#if NET45
+#if NET45 || NET40
 #pragma warning disable RS0030 // API missing from DbParameter in NET 4.5
 				else if (((IDbDataParameter)parameter).Precision > 0)
 				{

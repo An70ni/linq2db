@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace LinqToDB.Linq
 {
 	public interface IDataReaderAsync : IDisposable,
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		IAsyncDisposable
 #else
 		Async.IAsyncDisposable

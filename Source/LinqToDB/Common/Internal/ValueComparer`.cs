@@ -87,7 +87,11 @@ namespace LinqToDB.Common.Internal
 			while (typedEquals == null
 				&& type != null)
 			{
+#if !NET40
 				var declaredMethods = type.GetTypeInfo().DeclaredMethods;
+#else
+				var declaredMethods = type.GetTypeInfo().GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+#endif
 				typedEquals = declaredMethods.FirstOrDefault(
 					m => m.IsStatic
 						&& m.ReturnType == typeof(bool)

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LinqToDB.Linq
 {
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 	using Async;
 #endif
 

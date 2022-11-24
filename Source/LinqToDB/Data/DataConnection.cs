@@ -14,6 +14,10 @@ using LinqToDB.Common.Internal;
 
 namespace LinqToDB.Data
 {
+#if THE_RAOT_CORE
+	using LinqToDB.Compatibility.System.Collections;
+	using System.Collections.ObjectModel;
+#endif
 	using Async;
 	using Common;
 	using Configuration;
@@ -856,7 +860,11 @@ namespace LinqToDB.Data
 		/// Returns registered providers collection.
 		/// </returns>
 		public static IReadOnlyDictionary<string, IDataProvider> GetRegisteredProviders() =>
-			_dataProviders.ToDictionary(p => p.Key, p => p.Value);
+			_dataProviders.ToDictionary(p => p.Key, p => p.Value)
+#if THE_RAOT_CORE
+				.AsReadOnlyDictionary()
+#endif
+				;
 
 		class ConfigurationInfo
 		{

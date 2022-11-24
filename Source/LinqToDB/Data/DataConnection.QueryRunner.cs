@@ -140,7 +140,7 @@ namespace LinqToDB.Data
 				base.Dispose();
 			}
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 			public override Task DisposeAsync()
 #else
 			public override async ValueTask DisposeAsync()
@@ -166,7 +166,7 @@ namespace LinqToDB.Data
 					});
 				}
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 				return base.DisposeAsync();
 #else
 				await base.DisposeAsync().ConfigureAwait(Configuration.ContinueOnCapturedContext);
@@ -700,7 +700,7 @@ namespace LinqToDB.Data
 				{
 					 return _dataReader.DisposeAsync();
 				}
-#elif NATIVE_ASYNC
+#elif NATIVE_ASYNC || THE_RAOT_CORE
 				public ValueTask DisposeAsync()
 				{
 					Dispose();

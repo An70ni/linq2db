@@ -11,6 +11,9 @@ namespace LinqToDB.DataProvider.Oracle
 	using SqlProvider;
 	using Mapping;
 	using SqlQuery;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public static partial class OracleTools
 	{
@@ -104,8 +107,11 @@ namespace LinqToDB.DataProvider.Oracle
 							conv.Convert(sb, value);
 					};
 				}
-
+#if NATIVE_READONLY || !THE_RAOT_CORE
 				return o => ValueConverter(converters, o);
+#else
+				return o => ValueConverter(converters.WrapAsIReadOnlyList(), o);
+#endif
 			}
 
 			public override void SetTable<TContext>(TContext context, ISqlBuilder sqlBuilder, MappingSchema mappingSchema, SqlTable table, MethodCallExpression methodCall, Func<TContext, Expression, ColumnDescriptor?, ISqlExpression> converter)
@@ -174,7 +180,9 @@ namespace LinqToDB.DataProvider.Oracle
 			return converter(data);
 		}
 
+#pragma warning disable IDE0001 // Упрощение имен
 		private static readonly MethodInfo OracleXmlTableIEnumerableT = MemberHelper.MethodOf(() => OracleXmlTable<object>(null!, (IEnumerable<object>)null!)).GetGenericMethodDefinition();
+#pragma warning restore IDE0001 // Упрощение имен
 		private static readonly MethodInfo OracleXmlTableString       = MemberHelper.MethodOf(() => OracleXmlTable<object>(null!, (string)null!))             .GetGenericMethodDefinition();
 		private static readonly MethodInfo OracleXmlTableFuncString   = MemberHelper.MethodOf(() => OracleXmlTable<object>(null!, (Func<string>)null!))       .GetGenericMethodDefinition();
 

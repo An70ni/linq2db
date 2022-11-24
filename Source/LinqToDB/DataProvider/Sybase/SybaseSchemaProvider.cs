@@ -8,6 +8,9 @@ namespace LinqToDB.DataProvider.Sybase
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class SybaseSchemaProvider : SchemaProviderBase
 	{
@@ -101,7 +104,11 @@ WHERE
 	i.status & 2048 = 2048 AND
 	i.indid > 0 AND
 	c.colid < i.keycnt + CASE WHEN i.indid = 1 THEN 1 ELSE 0 END")
-				.ToList();
+				.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)
@@ -162,7 +169,11 @@ WHERE
 
 			sql = "SELECT * FROM (" + sql + ") as t WHERE ThisColumn IS NOT NULL";
 
-			return dataConnection.Query<ForeignKeyInfo>(sql).ToList();
+			return dataConnection.Query<ForeignKeyInfo>(sql).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ProcedureInfo>? GetProcedures(DataConnection dataConnection, GetSchemaOptions options)

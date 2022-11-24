@@ -12,6 +12,10 @@ namespace LinqToDB.DataProvider.Oracle
 	using Common;
 	using Data;
 	using Expressions;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using LinqToDB.Compatibility.System.Collections;
+	using Theraot.Collections;
+#endif
 	using Mapping;
 
 	public class OracleProviderAdapter : IDynamicProviderAdapter
@@ -612,7 +616,11 @@ namespace LinqToDB.DataProvider.Oracle
 				mappingSchema,
 				assemblyName != ManagedAssemblyName,
 
-				customReaders,
+				customReaders
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyList()
+#endif
+				,
 
 				oracleBFileType,
 				oracleBinaryType,
@@ -804,7 +812,11 @@ namespace LinqToDB.DataProvider.Oracle
 				mappingSchema,
 				true,
 
-				customReaders,
+				customReaders
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyList()
+#endif
+				,
 
 				oracleBFileType,
 				oracleBinaryType,
@@ -1027,10 +1039,18 @@ namespace LinqToDB.DataProvider.Oracle
 					{ OracleProviderAdapter.OracleDbType.AnyData     , OracleDbType.AnyData      },
 					{ OracleProviderAdapter.OracleDbType.RowId       , OracleDbType.RowId        },
 					{ OracleProviderAdapter.OracleDbType.Table       , OracleDbType.Table        },
-				};
+				}
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.AsReadOnlyDictionary()
+#endif
+				;
 
 			private static readonly IReadOnlyDictionary<OracleDbType, OracleProviderAdapter.OracleDbType> OracleDbTypeMapReverse =
-				OracleDbTypeMap.ToDictionary(_ => _.Value, _ => _.Key);
+				OracleDbTypeMap.ToDictionary(_ => _.Value, _ => _.Key)
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.AsReadOnlyDictionary()
+#endif
+				;
 
 			public static OracleDbType? ConvertDbType(OracleProviderAdapter.OracleDbType type)
 			{
@@ -1371,10 +1391,18 @@ namespace LinqToDB.DataProvider.Oracle
 					{ OracleProviderAdapter.OracleDbType.ObjectAsJson, OracleDbType.ObjectAsJson },
 					{ OracleProviderAdapter.OracleDbType.BinaryDouble, OracleDbType.BinaryDouble },
 					{ OracleProviderAdapter.OracleDbType.BinaryFloat , OracleDbType.BinaryFloat  },
-				};
+				}
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.AsReadOnlyDictionary()
+#endif
+				;
 
 			private static readonly IReadOnlyDictionary<OracleDbType, OracleProviderAdapter.OracleDbType> OracleDbTypeMapReverse =
-				OracleDbTypeMap.ToDictionary(_ => _.Value, _ => _.Key);
+				OracleDbTypeMap.ToDictionary(_ => _.Value, _ => _.Key)
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.AsReadOnlyDictionary()
+#endif
+				;
 
 			public static OracleDbType? ConvertDbType(OracleProviderAdapter.OracleDbType type)
 			{

@@ -9,6 +9,9 @@ namespace LinqToDB.DataProvider.DB2
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	// Known Issues:
 	// - CommandBehavior.SchemaOnly doesn't return schema for stored procedures
@@ -112,7 +115,11 @@ WHERE
 					ColumnName     = col.c,
 					Ordinal        = col.i
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+			.WrapAsIReadOnlyCollection()
+#endif
+			;
 		}
 
 		List<ColumnInfo>? _columns;
@@ -260,7 +267,11 @@ WHERE
 
 					return list;
 				})
-				.ToList();
+				.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+			.WrapAsIReadOnlyCollection()
+#endif
+			;
 		}
 
 		protected override string? GetDbType(GetSchemaOptions options, string? columnType, DataTypeInfo? dataType, int? length, int? precision, int? scale, string? udtCatalog, string? udtSchema, string? udtName)

@@ -8,6 +8,9 @@ namespace LinqToDB.DataProvider.Firebird
 	using Mapping;
 	using SqlProvider;
 	using SqlQuery;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public class FirebirdSqlOptimizer : BasicSqlOptimizer
 	{
@@ -271,14 +274,24 @@ namespace LinqToDB.DataProvider.Firebird
 					{
 						// prevent removal by ConvertConvertion
 						if (!convertFunc.DoNotOptimize)
-							convertFunc.DoNotOptimize = CastRequired(visitor.Stack);
+							convertFunc.DoNotOptimize = CastRequired(
+								visitor.Stack
+#if !NATIVE_READONLY && THE_RAOT_CORE
+								.WrapAsIReadOnlyList()
+#endif
+								);
 						return e;
 					}
 
 					if (paramValue.DbDataType.SystemType == typeof(bool) && visitor.ParentElement is SqlFunction func && func.Name == "CASE")
 						return e;
 
-					if (!CastRequired(visitor.Stack))
+					if (!CastRequired(
+						visitor.Stack
+#if !NATIVE_READONLY && THE_RAOT_CORE
+								.WrapAsIReadOnlyList()
+#endif
+						))
 						return e;
 
 					// TODO: temporary guard against cast to unknown type (Variant)

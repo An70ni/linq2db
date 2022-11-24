@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 
 namespace LinqToDB.Async
 {
+	#if !NATIVE_ASYNC && !THE_RAOT_CORE
 	/// <summary>
 	/// Asynchronous version of the IEnumerator&lt;T&gt; interface, allowing elements to be retrieved asynchronously.
 	/// </summary>
@@ -26,6 +27,7 @@ namespace LinqToDB.Async
 		/// </returns>
 		Task<bool> MoveNextAsync();
 	}
+#endif
 
 	internal class AsyncEnumeratorImpl<T> : IAsyncEnumerator<T>
 	{
@@ -40,6 +42,19 @@ namespace LinqToDB.Async
 
 		T IAsyncEnumerator<T>.Current => _enumerator.Current;
 
+#if THE_RAOT_CORE
+		public ValueTask DisposeAsync()
+		{
+			_enumerator.Dispose();
+			return default;
+		}
+
+		ValueTask<bool> IAsyncEnumerator<T>.MoveNextAsync()
+		{
+			_cancellationToken.ThrowIfCancellationRequested();
+			return new ValueTask<bool>(_enumerator.MoveNext());
+		}
+#else
 		Task IAsyncDisposable.DisposeAsync()
 		{
 			_enumerator.Dispose();
@@ -51,6 +66,7 @@ namespace LinqToDB.Async
 			_cancellationToken.ThrowIfCancellationRequested();
 			return Task.FromResult(_enumerator.MoveNext());
 		}
+#endif
 	}
 }
 #endif

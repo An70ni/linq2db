@@ -10,6 +10,9 @@ namespace LinqToDB.SqlQuery
 	using Data;
 	using Mapping;
 	using Remote;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public class SqlTable : ISqlTableSource, IQueryExtendible
 	{
@@ -204,12 +207,20 @@ namespace LinqToDB.SqlQuery
 		readonly List<SqlField>              _orderedFields = new();
 		readonly Dictionary<string,SqlField> _fieldsLookup  = new();
 
-		public           IReadOnlyList<SqlField>         Fields => _orderedFields;
+		public           IReadOnlyList<SqlField>         Fields => _orderedFields
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyList()
+#endif
+				;
 		public List<SqlQueryExtension>? SqlQueryExtensions { get; set; }
 
 		// identity fields cached, as it is most used fields filter
 		private readonly List<SqlField>                  _identityFields = new ();
-		public IReadOnlyList<SqlField> IdentityFields => _identityFields;
+		public IReadOnlyList<SqlField> IdentityFields => _identityFields
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyList()
+#endif
+				;
 
 		internal void ClearFields()
 		{

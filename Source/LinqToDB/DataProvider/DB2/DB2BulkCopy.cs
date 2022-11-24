@@ -60,15 +60,23 @@ namespace LinqToDB.DataProvider.DB2
 			{
 				var connection = _provider.TryGetProviderConnection(dataConnection, dataConnection.Connection);
 				if (connection != null)
+				{
 					// call the synchronous provider-specific implementation
-					return Task.FromResult(ProviderSpecificCopyImpl(
+					var bulkCopyRowsCopied = ProviderSpecificCopyImpl(
 						table,
 						options,
 						source,
 						dataConnection,
 						connection,
 						_provider.Adapter.BulkCopy,
-						TraceAction));
+											TraceAction);
+					return
+#if NATIVE_ASYNC || !THE_RAOT_CORE
+						Task.FromResult(bulkCopyRowsCopied);
+#else
+						TaskEx.FromResult(bulkCopyRowsCopied);
+#endif
+				}
 			}
 
 			return MultipleRowsCopyAsync(table, options, source, cancellationToken);

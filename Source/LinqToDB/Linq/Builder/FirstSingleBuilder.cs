@@ -10,6 +10,9 @@ namespace LinqToDB.Linq.Builder
 	using SqlQuery;
 	using Common;
 	using Reflection;
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+	using System.Threading.Tasks;
+#endif
 
 	class FirstSingleBuilder : MethodCallBuilder
 	{

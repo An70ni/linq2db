@@ -9,6 +9,9 @@ namespace LinqToDB.SqlQuery
 	using Common;
 	using Linq.Builder;
 	using Remote;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public readonly struct CloneVisitor<TContext>
 	{
@@ -80,7 +83,11 @@ namespace LinqToDB.SqlQuery
 				SkipValue  = Clone(selectClause.SkipValue),
 			};
 
-			CloneInto(newSelect.Columns, selectClause.Columns);
+			CloneInto(newSelect.Columns, selectClause.Columns
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+				);
 
 			return newSelect;
 		}
@@ -88,14 +95,22 @@ namespace LinqToDB.SqlQuery
 		private SqlFromClause Clone(SelectQuery selectQuery, SqlFromClause from)
 		{
 			var newFrom = new SqlFromClause(selectQuery);
-			CloneInto(newFrom.Tables, from.Tables);
+			CloneInto(newFrom.Tables, from.Tables
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+				);
 			return newFrom;
 		}
 
 		private SqlOrderByClause Clone(SelectQuery selectQuery, SqlOrderByClause orderBy)
 		{
 			var newOrderBy = new SqlOrderByClause(selectQuery);
-			CloneInto(newOrderBy.Items, orderBy.Items);
+			CloneInto(newOrderBy.Items, orderBy.Items
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+				);
 			return newOrderBy;
 		}
 
@@ -114,7 +129,11 @@ namespace LinqToDB.SqlQuery
 				GroupingType = groupBy.GroupingType
 			};
 
-			CloneInto(newGroupBy.Items, groupBy.Items);
+			CloneInto(newGroupBy.Items, groupBy.Items
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+				);
 			return newGroupBy;
 		}
 
@@ -177,10 +196,18 @@ namespace LinqToDB.SqlQuery
 					newSelectQuery.OrderBy = Clone(newSelectQuery, selectQuery.OrderBy);
 
 					if (selectQuery.HasSetOperators)
-						CloneInto(newSelectQuery.SetOperators, selectQuery.SetOperators);
+						CloneInto(newSelectQuery.SetOperators, selectQuery.SetOperators
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+							);
 
 					if (selectQuery.HasUniqueKeys)
-						CloneInto(newSelectQuery.UniqueKeys, selectQuery.UniqueKeys);
+						CloneInto(newSelectQuery.UniqueKeys, selectQuery.UniqueKeys
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+							);
 
 					newSelectQuery.Visit((newSelectQuery, selectQuery), static (context, expr) =>
 					{
@@ -394,7 +421,11 @@ namespace LinqToDB.SqlQuery
 
 					// TODO: children Clone called before _objectTree update (original cloning logic)
 					var newSet = new SqlGroupingSet();
-					CloneInto(newSet.Items, groupingSet.Items);
+					CloneInto(newSet.Items, groupingSet.Items
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+						);
 
 					_objectTree.Add(element, clone = newSet);
 					break;
@@ -410,7 +441,11 @@ namespace LinqToDB.SqlQuery
 						WithIdentity = insert.WithIdentity,
 						Into         = Clone(insert.Into)
 					};
-					CloneInto(newInsert.Items, insert.Items);
+					CloneInto(newInsert.Items, insert.Items
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+						);
 
 					_objectTree.Add(element, clone = newInsert);
 					break;
@@ -506,11 +541,19 @@ namespace LinqToDB.SqlQuery
 					if (output.OutputColumns != null)
 					{
 						newOutput.OutputColumns = new List<ISqlExpression>();
-						CloneInto(newOutput.OutputColumns, output.OutputColumns);
+						CloneInto(newOutput.OutputColumns, output.OutputColumns
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+							);
 					}
 
 					if (output.HasOutputItems)
-						CloneInto(newOutput.OutputItems, output.OutputItems);
+						CloneInto(newOutput.OutputItems, output.OutputItems
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+							);
 
 					_objectTree.Add(element, newOutput);
 					break;
@@ -608,7 +651,11 @@ namespace LinqToDB.SqlQuery
 					var expr = (SqlPredicate.InList)(IQueryElement)element;
 					// TODO: children Clone called before _objectTree update (original cloning logic)
 					var newExpr = new SqlPredicate.InList(Clone(expr.Expr1), expr.WithNull, expr.IsNot);
-					CloneInto(newExpr.Values, expr.Values);
+					CloneInto(newExpr.Values, expr.Values
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+						);
 					_objectTree.Add(element, clone = newExpr);
 					break;
 				}
@@ -629,7 +676,11 @@ namespace LinqToDB.SqlQuery
 
 					_objectTree.Add(element, clone = sc);
 
-					CloneInto(sc.Conditions, search.Conditions);
+					CloneInto(sc.Conditions, search.Conditions
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+						);
 					break;
 				}
 
@@ -694,10 +745,18 @@ namespace LinqToDB.SqlQuery
 
 					_objectTree.Add(element, clone = newTs);
 
-					CloneInto(newTs.Joins, ts.Joins);
+					CloneInto(newTs.Joins, ts.Joins
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+						);
 
 					if (ts.HasUniqueKeys)
-						CloneInto(newTs.UniqueKeys, ts.UniqueKeys);
+						CloneInto(newTs.UniqueKeys, ts.UniqueKeys
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+							);
 					break;
 				}
 
@@ -722,8 +781,16 @@ namespace LinqToDB.SqlQuery
 						Table = Clone(update.Table)
 					};
 
-					CloneInto(newUpdate.Items, update.Items);
-					CloneInto(newUpdate.Keys, update.Keys);
+					CloneInto(newUpdate.Items, update.Items
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+						);
+					CloneInto(newUpdate.Keys, update.Keys
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+						);
 
 					_objectTree.Add(element, clone = newUpdate);
 					break;
@@ -761,7 +828,11 @@ namespace LinqToDB.SqlQuery
 
 					// TODO: children Clone called before _objectTree update (original cloning logic)
 					var newWith = new SqlWithClause();
-					CloneInto(newWith.Clauses, with.Clauses);
+					CloneInto(newWith.Clauses, with.Clauses
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+						);
 					_objectTree.Add(element, clone = newWith);
 					break;
 				}
@@ -780,7 +851,11 @@ namespace LinqToDB.SqlQuery
 						var fields = values.Fields.Select(f => new SqlField(f)).ToArray();
 						var rows   = new List<ISqlExpression[]>(values.Rows.Count);
 						CloneInto(rows, values.Rows);
-						clone = new SqlValuesTable(fields, fields.Select(f => f.ColumnDescriptor?.MemberInfo).ToArray(), rows);
+						clone = new SqlValuesTable(fields, fields.Select(f => f.ColumnDescriptor?.MemberInfo).ToArray(), rows
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyList()
+#endif
+							);
 					}
 					break;
 

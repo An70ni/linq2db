@@ -30,7 +30,11 @@ namespace LinqToDB.Async
 			return Transaction.CommitAsync(cancellationToken);
 #else
 			Commit();
+#if THE_RAOT_CORE
+			return TaskExEx.CompletedTask;
+#else
 			return TaskEx.CompletedTask;
+#endif
 #endif
 		}
 
@@ -40,7 +44,11 @@ namespace LinqToDB.Async
 			return Transaction.RollbackAsync(cancellationToken);
 #else
 			Rollback();
+#if THE_RAOT_CORE
+			return TaskExEx.CompletedTask;
+#else
 			return TaskEx.CompletedTask;
+#endif
 #endif
 		}
 
@@ -48,8 +56,8 @@ namespace LinqToDB.Async
 		public virtual void Dispose() => Transaction.Dispose();
 		#endregion
 
-		#region IAsyncDisposable
-#if !NATIVE_ASYNC
+#region IAsyncDisposable
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 		public virtual Task DisposeAsync()
 		{
 			Dispose();
@@ -58,13 +66,15 @@ namespace LinqToDB.Async
 #else
 		public virtual ValueTask DisposeAsync()
 		{
+#if NATIVE_ASYNC
 			if (Transaction is IAsyncDisposable asyncDisposable)
 				return asyncDisposable.DisposeAsync();
+#endif
 
 			Dispose();
 			return default;
 		}
 #endif
-		#endregion
+#endregion
 	}
 }

@@ -8,7 +8,7 @@ namespace LinqToDB.Data
 	/// Data connection transaction controller.
 	/// </summary>
 	public class DataConnectionTransaction : IDisposable,
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		IAsyncDisposable
 #else
 		Async.IAsyncDisposable
@@ -78,7 +78,7 @@ namespace LinqToDB.Data
 				DataConnection.RollbackTransaction();
 		}
 
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		public ValueTask DisposeAsync()
 		{
 			if (_disposeTransaction)

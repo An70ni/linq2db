@@ -6,7 +6,9 @@ namespace LinqToDB.DataProvider.DB2
 	using Common;
 	using Data;
 	using SchemaProvider;
-
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 	class DB2zOSSchemaProvider : DB2LUWSchemaProvider
 	{
 		public DB2zOSSchemaProvider(DB2DataProvider provider) : base(provider)
@@ -53,7 +55,7 @@ namespace LinqToDB.DataProvider.DB2
 		protected override IReadOnlyCollection<PrimaryKeyInfo> GetPrimaryKeys(DataConnection dataConnection,
 			IEnumerable<TableSchema> tables, GetSchemaOptions options)
 		{
-			return _primaryKeys = dataConnection.Query(
+			_primaryKeys = dataConnection.Query(
 				rd => new PrimaryKeyInfo
 				{
 					// IMPORTANT: reader calls must be ordered to support SequentialAccess
@@ -78,6 +80,11 @@ namespace LinqToDB.DataProvider.DB2
 					ORDER BY
 						col.TBCREATOR, col.TBNAME, col.KEYSEQ")
 				.ToList();
+			return _primaryKeys
+#if !NATIVE_READONLY && THE_RAOT_CORE
+			.WrapAsIReadOnlyCollection()
+#endif
+			;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)
@@ -200,7 +207,11 @@ namespace LinqToDB.DataProvider.DB2
 					OtherTableID = fk.otherTable,
 					OtherColumn  = otherColumn.ColumnName
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+			.WrapAsIReadOnlyCollection()
+#endif
+			;
 		}
 
 		protected override List<ProcedureInfo>? GetProcedures(DataConnection dataConnection, GetSchemaOptions options)

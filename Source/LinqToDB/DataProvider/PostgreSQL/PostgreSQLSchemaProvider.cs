@@ -14,6 +14,9 @@ namespace LinqToDB.DataProvider.PostgreSQL
 	using Data;
 	using SchemaProvider;
 	using SqlQuery;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public class PostgreSQLSchemaProvider : SchemaProviderBase
 	{
@@ -189,7 +192,11 @@ namespace LinqToDB.DataProvider.PostgreSQL
 					WHERE
 						pg_constraint.contype = 'p'
 						AND {GenerateSchemaFilter(dataConnection, "pg_namespace.nspname")}")
-				.ToList();
+				.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		static string ToDatabaseLiteral(DataConnection dataConnection, string? str)
@@ -476,7 +483,11 @@ namespace LinqToDB.DataProvider.PostgreSQL
 					OtherColumn  = Convert.ToString(col.otherColumn)!,
 					Ordinal      = col.ordinal
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override DataType GetDataType(string? dataType, string? columnType, int? length, int? precision, int? scale)

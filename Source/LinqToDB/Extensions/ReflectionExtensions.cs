@@ -18,6 +18,9 @@ namespace LinqToDB.Extensions
 	using Expressions;
 	using LinqToDB.Common;
 	using LinqToDB.Reflection;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	[PublicAPI]
 	public static class ReflectionExtensions
@@ -308,7 +311,13 @@ namespace LinqToDB.Extensions
 
 		static IReadOnlyCollection<object> GetAttributesTreeInternal(Type type)
 		{
-			IReadOnlyCollection<object> attrs = _typeAttributesInternal.GetOrAdd(type, x => type.GetCustomAttributes(false));
+			IReadOnlyCollection<object> attrs = _typeAttributesInternal
+				.GetOrAdd(type, x => 
+						type.GetCustomAttributes(false)
+#if !NATIVE_READONLY && THE_RAOT_CORE
+						.WrapAsIReadOnlyCollection()
+#endif
+			);
 
 			if (type.IsInterface)
 				return attrs;
@@ -369,9 +378,17 @@ namespace LinqToDB.Extensions
 				}
 			}
 
-			if (list != null   ) return list;
+			if (list != null   ) return list
+#if !NATIVE_READONLY && THE_RAOT_CORE
+					.WrapAsIReadOnlyCollection()
+#endif
+					;
 			if (attrs.Count > 0) return attrs;
-			return Array<object>.Empty;
+			return Array<object>.Empty
+#if !NATIVE_READONLY && THE_RAOT_CORE
+					.WrapAsIReadOnlyCollection()
+#endif
+					;
 		}
 
 		#endregion
@@ -1112,21 +1129,49 @@ namespace LinqToDB.Extensions
 			}
 			else if (mi is PropertyInfo property)
 			{
-				if (property.GetMethod != null)
+				var getMethod=
+#if !NET40
+					property.GetMethod;
+#else
+					property.GetGetMethod();
+#endif
+				if (getMethod != null)
 				{
-					var baseDefinition = property.GetMethod.GetBaseDefinition();
+					var baseDefinition = getMethod.GetBaseDefinition();
 
 					foreach (var p in type.GetProperties())
-						if (p.GetMethod?.GetBaseDefinition() == baseDefinition)
+					{
+						var pGetMethod=
+#if !NET40
+							p.GetMethod;
+#else
+							p.GetGetMethod();
+#endif
+						if (pGetMethod?.GetBaseDefinition() == baseDefinition)
 							return p;
+					}
 				}
-				if (property.SetMethod != null)
+				var setMethod=
+#if !NET40
+					property.SetMethod;
+#else					
+					property.GetSetMethod();
+#endif
+				if (setMethod != null)
 				{
-					var baseDefinition = property.SetMethod.GetBaseDefinition();
+					var baseDefinition = setMethod.GetBaseDefinition();
 
 					foreach (var p in type.GetProperties())
-						if (p.SetMethod?.GetBaseDefinition() == baseDefinition)
+					{
+						var pSetMethod=
+#if !NET40
+							p.SetMethod;
+#else
+							p.GetSetMethod();
+#endif
+						if (pSetMethod?.GetBaseDefinition() == baseDefinition)
 							return p;
+					}
 				}
 			}
 

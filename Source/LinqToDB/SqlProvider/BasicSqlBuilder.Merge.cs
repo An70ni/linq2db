@@ -5,6 +5,9 @@ namespace LinqToDB.SqlProvider
 {
 	using LinqToDB.Common;
 	using SqlQuery;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public abstract partial class BasicSqlBuilder : ISqlBuilder
 	{
@@ -322,7 +325,15 @@ namespace LinqToDB.SqlProvider
 				if (i > 0)
 					StringBuilder.Append(InlineComma);
 
-				if (IsSqlValuesTableValueTypeRequired(merge.Source.SourceEnumerable!, Array<ISqlExpression[]>.Empty, -1, i))
+				if (IsSqlValuesTableValueTypeRequired(
+					merge.Source.SourceEnumerable!
+					, Array<ISqlExpression[]>.Empty
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+							, -1
+							, i
+							))
 					BuildTypedExpression(new SqlDataType(field), new SqlValue(field.Type, null));
 				else
 					BuildExpression(new SqlValue(field.Type, null));

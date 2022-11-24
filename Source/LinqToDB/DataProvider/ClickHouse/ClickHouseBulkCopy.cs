@@ -12,6 +12,9 @@ namespace LinqToDB.DataProvider.ClickHouse
 	using Data;
 	using LinqToDB.Extensions;
 	using SqlProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	sealed class ClickHouseBulkCopy : BasicBulkCopy
 	{
@@ -78,7 +81,14 @@ namespace LinqToDB.DataProvider.ClickHouse
 					return ProviderSpecificOctonicaBulkCopyAsync(connections.Value, table, options, source, cancellationToken);
 
 				if (_provider.Adapter.OctonicaCreateWriter != null)
-					return Task.FromResult(ProviderSpecificOctonicaBulkCopy(connections.Value, table, options, source));
+				{
+					var copy = ProviderSpecificOctonicaBulkCopy(connections.Value, table, options, source);
+#if NATIVE_ASYNC || !THE_RAOT_CORE
+					return Task.FromResult(copy);
+#else
+					return TaskEx.FromResult(copy);
+#endif
+				}
 
 				if (_provider.Adapter.ClientBulkCopyCreator != null)
 					return ProviderSpecificClientBulkCopyAsync(connections.Value, table, options, (columns) => new BulkCopyReader<T>(connections.Value.DataConnection, columns, source), cancellationToken);
@@ -100,7 +110,7 @@ namespace LinqToDB.DataProvider.ClickHouse
 				if (_provider.Adapter.OctonicaCreateWriterAsync != null)
 					return ProviderSpecificOctonicaBulkCopyAsync(connections.Value, table, options, source, cancellationToken);
 
-				if (_provider.Adapter.OctonicaCreateWriter != null)
+								if (_provider.Adapter.OctonicaCreateWriter != null)
 					return Task.FromResult(ProviderSpecificOctonicaBulkCopy(connections.Value, table, options, EnumerableHelper.AsyncToSyncEnumerable(source.GetAsyncEnumerator(cancellationToken))));
 
 				if (_provider.Adapter.ClientBulkCopyCreator != null)
@@ -213,7 +223,12 @@ namespace LinqToDB.DataProvider.ClickHouse
 					() => sql,
 					() =>
 					{
-						bc.WriteTable(data, rows);
+#if NATIVE_READONLY || !THE_RAOT_CORE
+						var dataCollection = data;
+#else
+						var dataCollection = data.WrapAsIReadOnlyList();
+#endif
+						bc.WriteTable(dataCollection, rows);
 						return rows;
 					});
 
@@ -319,7 +334,12 @@ namespace LinqToDB.DataProvider.ClickHouse
 						() => sql,
 						async () =>
 						{
-							await bc.WriteTableAsync(data, rows, cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext);
+#if NATIVE_READONLY || !THE_RAOT_CORE
+							var dataCollection = data;
+#else
+							var dataCollection = data.WrapAsIReadOnlyList();
+#endif
+							await bc.WriteTableAsync(dataCollection, rows, cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext);
 							return rows;
 						}).ConfigureAwait(Configuration.ContinueOnCapturedContext);
 

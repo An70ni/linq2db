@@ -94,6 +94,7 @@ namespace LinqToDB.Data.RetryPolicy
 			return _policy.Execute(() => _command.ExecuteScalar());
 		}
 
+#if !NO_ASYNC
 		protected override Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
 		{
 			return _policy.ExecuteAsync(ct => _command.ExecuteReaderAsync(behavior, ct), cancellationToken);
@@ -108,6 +109,7 @@ namespace LinqToDB.Data.RetryPolicy
 		{
 			return _policy.ExecuteAsync(ct => _command.ExecuteScalarAsync(ct), cancellationToken);
 		}
+#endif
 
 		public DbCommand UnderlyingObject => _command;
 	}

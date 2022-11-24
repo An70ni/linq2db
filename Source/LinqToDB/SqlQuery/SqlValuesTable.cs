@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+using Theraot.Collections;
+#endif
 
 namespace LinqToDB.SqlQuery
 {
@@ -135,7 +138,11 @@ namespace LinqToDB.SqlQuery
 				}
 			}
 
-			return rows;
+			return rows
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyList()
+#endif
+				;
 		}
 
 		#region ISqlTableSource

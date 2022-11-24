@@ -10,6 +10,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using LinqToDB.Extensions;
 using LinqToDB.Linq;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+using Theraot.Collections;
+#endif
 
 // ReSharper disable SwitchStatementMissingSomeCases
 // ReSharper disable ForCanBeConvertedToForeach
@@ -484,7 +487,16 @@ namespace LinqToDB.Expressions
 			private bool CompareMethodCall(MethodCallExpression a, MethodCallExpression b)
 				=> Equals(a.Method, b.Method)
 				   && Compare(a.Object, b.Object)
-				   && CompareExpressionList(a.Arguments, b.Arguments);
+				   && CompareExpressionList(
+					   a.Arguments
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   , b.Arguments
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   );
 
 			private bool CompareLambda(LambdaExpression a, LambdaExpression b)
 			{
@@ -525,8 +537,26 @@ namespace LinqToDB.Expressions
 
 			private bool CompareNew(NewExpression a, NewExpression b)
 				=> Equals(a.Constructor, b.Constructor)
-				   && CompareExpressionList(a.Arguments, b.Arguments)
-				   && CompareMemberList(a.Members, b.Members);
+				   && CompareExpressionList(
+					   a.Arguments
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   , b.Arguments
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   )
+				   && CompareMemberList(
+					   a.Members
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   , b.Members
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   );
 
 			private bool CompareExpressionList(IReadOnlyList<Expression>? a, IReadOnlyList<Expression>? b)
 			{
@@ -587,7 +617,16 @@ namespace LinqToDB.Expressions
 			}
 
 			private bool CompareNewArray(NewArrayExpression a, NewArrayExpression b)
-				=> CompareExpressionList(a.Expressions, b.Expressions);
+				=> CompareExpressionList(
+					a.Expressions
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					, b.Expressions
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					);
 
 //            private bool CompareExtension(Expression a, Expression b)
 //            {
@@ -618,11 +657,29 @@ namespace LinqToDB.Expressions
 
 			private bool CompareInvocation(InvocationExpression a, InvocationExpression b)
 				=> Compare(a.Expression, b.Expression)
-				   && CompareExpressionList(a.Arguments, b.Arguments);
+				   && CompareExpressionList(
+					   a.Arguments
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   , b.Arguments
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   );
 
 			private bool CompareMemberInit(MemberInitExpression a, MemberInitExpression b)
 				=> Compare(a.NewExpression, b.NewExpression)
-				   && CompareBindingList(a.Bindings, b.Bindings);
+				   && CompareBindingList(
+					   a.Bindings
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   , b.Bindings
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   );
 
 			private bool CompareBindingList(IReadOnlyList<MemberBinding>? a, IReadOnlyList<MemberBinding>? b)
 			{
@@ -691,15 +748,42 @@ namespace LinqToDB.Expressions
 
 			private bool CompareMemberListBinding(MemberListBinding a, MemberListBinding b)
 				=> Equals(a.Member, b.Member)
-				   && CompareElementInitList(a.Initializers, b.Initializers);
+				   && CompareElementInitList(
+					   a.Initializers
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   , b.Initializers
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   );
 
 			private bool CompareMemberMemberBinding(MemberMemberBinding a, MemberMemberBinding b)
 				=> Equals(a.Member, b.Member)
-				   && CompareBindingList(a.Bindings, b.Bindings);
+				   && CompareBindingList(
+					   a.Bindings
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   , b.Bindings
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   );
 
 			private bool CompareListInit(ListInitExpression a, ListInitExpression b)
 				=> Compare(a.NewExpression, b.NewExpression)
-				   && CompareElementInitList(a.Initializers, b.Initializers);
+				   && CompareElementInitList(
+					   a.Initializers
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   , b.Initializers
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   );
 
 			private bool CompareElementInitList(IReadOnlyList<ElementInit>? a, IReadOnlyList<ElementInit>? b)
 			{
@@ -732,7 +816,16 @@ namespace LinqToDB.Expressions
 
 			private bool CompareElementInit(ElementInit a, ElementInit b)
 				=> Equals(a.AddMethod, b.AddMethod)
-				   && CompareExpressionList(a.Arguments, b.Arguments);
+				   && CompareExpressionList(
+					   a.Arguments
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   , b.Arguments
+#if !NATIVE_READONLY && THE_RAOT_CORE
+							.WrapAsIReadOnlyList()
+#endif
+					   );
 
 			private class ScopedDictionary<TKey, TValue>
 				where TKey : notnull

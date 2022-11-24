@@ -288,7 +288,13 @@ namespace LinqToDB.Common.Internal.Cache
 			{
 				_lastExpirationScan = now;
 				Task.Factory.StartNew(state => ScanForExpiredItems((MemoryCache<TKey>)state!), this,
-					CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
+					CancellationToken.None,
+#if NET40
+					TaskCreationOptions.None
+#else
+					TaskCreationOptions.DenyChildAttach
+#endif
+					, TaskScheduler.Default);
 			}
 		}
 

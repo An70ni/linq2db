@@ -129,7 +129,12 @@ namespace LinqToDB.DataProvider.Oracle
 			ITable<T> table, BulkCopyOptions options, IEnumerable<T> source, CancellationToken cancellationToken)
 		{
 			// call the synchronous provider-specific implementation
-			return Task.FromResult(ProviderSpecificCopy(table, options, source));
+			var bulkCopyRowsCopied = ProviderSpecificCopy(table, options, source);
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+			return TaskEx.FromResult(bulkCopyRowsCopied);
+#else
+			return Task.FromResult(bulkCopyRowsCopied);
+#endif
 		}
 
 #if NATIVE_ASYNC
@@ -387,7 +392,14 @@ namespace LinqToDB.DataProvider.Oracle
 			}
 
 			if (_provider.Adapter.ExecuteArray != null)
-				return Task.FromResult(helper.ExecuteCustom((cn, sql, ps) => ExecuteArray(cn, sql, ps, list.Count)));
+			{
+				var executed = helper.ExecuteCustom((cn, sql, ps) => ExecuteArray(cn, sql, ps, list.Count));
+#if !NATIVE_ASYNC && THE_RAOT_CORE
+				return TaskEx.FromResult(executed);
+#else
+				return Task.FromResult(executed);
+#endif
+			}
 
 			return helper.ExecuteAsync(cancellationToken);
 		}

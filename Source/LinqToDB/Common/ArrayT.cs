@@ -15,8 +15,10 @@ namespace LinqToDB.Common
 		/// </summary>
 #if NET45
 		public static readonly T[] Empty = new T[0];
-#else
+#elif !THE_RAOT_CORE
 		public static readonly T[] Empty = Array.Empty<T>();
+#else
+		public static readonly T[] Empty = ArrayEx.Empty<T>();
 #endif
 
 		internal static T[] Append(T[] array, T newElement)

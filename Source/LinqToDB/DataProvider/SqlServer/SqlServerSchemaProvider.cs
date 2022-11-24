@@ -8,6 +8,9 @@ namespace LinqToDB.DataProvider.SqlServer
 {
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class SqlServerSchemaProvider : SchemaProviderBase
 	{
@@ -107,7 +110,11 @@ namespace LinqToDB.DataProvider.SqlServer
 						k.CONSTRAINT_NAME    = c.CONSTRAINT_NAME
 				WHERE
 					c.CONSTRAINT_TYPE='PRIMARY KEY'")
-				.ToList();
+				.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)
@@ -243,7 +250,11 @@ namespace LinqToDB.DataProvider.SqlServer
 				ORDER BY
 					ThisTableID,
 					Ordinal")
-				.ToList();
+				.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ProcedureInfo>? GetProcedures(DataConnection dataConnection, GetSchemaOptions options)

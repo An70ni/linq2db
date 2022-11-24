@@ -9,6 +9,10 @@ namespace LinqToDB.DataProvider.Access
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
+
 	// https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/odbc-schema-collections
 	// unused tables:
 	// DataSourceInformation - database settings
@@ -23,7 +27,11 @@ namespace LinqToDB.DataProvider.Access
 			IEnumerable<TableSchema> tables, GetSchemaOptions options)
 		{
 			// https://github.com/dotnet/runtime/issues/35442
-			return Array<ForeignKeyInfo>.Empty;
+			return Array<ForeignKeyInfo>.Empty
+#if !NATIVE_READONLY && THE_RAOT_CORE
+										.WrapAsIReadOnlyCollection()
+#endif
+					;
 		}
 
 		protected override List<TableInfo> GetTables(DataConnection dataConnection, GetSchemaOptions options)
@@ -67,7 +75,11 @@ namespace LinqToDB.DataProvider.Access
 			IEnumerable<TableSchema> tables, GetSchemaOptions options)
 		{
 			// https://github.com/dotnet/runtime/issues/35442
-			return Array<PrimaryKeyInfo>.Empty;
+			return Array<PrimaryKeyInfo>.Empty
+#if !NATIVE_READONLY && THE_RAOT_CORE
+										.WrapAsIReadOnlyCollection()
+#endif
+					;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)

@@ -108,7 +108,13 @@ namespace LinqToDB.Linq.Builder
 
 			if (!isEnumerable && type.IsClass && type.IsGenericType && type.Name.StartsWith("<>"))
 			{
-				isEnumerable = type.GenericTypeArguments.Any(t => IsDetailType(t));
+				isEnumerable = type
+#if NET40
+					.GenericTypeArguments()
+#else
+					.GenericTypeArguments
+#endif
+					.Any(t => IsDetailType(t));
 			}
 
 			return isEnumerable;
@@ -1533,7 +1539,14 @@ namespace LinqToDB.Linq.Builder
 
 		public static LambdaExpression CorrectLambdaType(LambdaExpression before, LambdaExpression after, MappingSchema mappingSchema)
 		{
-			if (IsEnumerableType(before.ReturnType, mappingSchema) && before.ReturnType.IsGenericType && before.ReturnType.GenericTypeArguments.Length == 1)
+			if (IsEnumerableType(before.ReturnType, mappingSchema) && before.ReturnType.IsGenericType 
+				&& before.ReturnType
+#if NET40
+					.GenericTypeArguments()
+#else
+					.GenericTypeArguments
+#endif
+				.Length == 1)
 			{
 				var generic     = before.ReturnType.GetGenericTypeDefinition();
 				var elementType = GetEnumerableElementType(after.ReturnType, mappingSchema);
@@ -1621,7 +1634,13 @@ namespace LinqToDB.Linq.Builder
 			if (!type.IsGenericType)
 				return type;
 
-			var arguments = type.GenericTypeArguments.Select(FinalizeType).ToArray();
+			var arguments = type
+#if NET40
+					.GenericTypeArguments()
+#else
+					.GenericTypeArguments
+#endif
+					.Select(FinalizeType).ToArray();
 
 			var newType = type;
 

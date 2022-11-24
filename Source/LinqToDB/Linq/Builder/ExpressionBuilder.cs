@@ -18,6 +18,9 @@ namespace LinqToDB.Linq.Builder
 	using SqlQuery;
 	using LinqToDB.Expressions;
 	using LinqToDB.Reflection;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	partial class ExpressionBuilder
 	{
@@ -92,7 +95,11 @@ namespace LinqToDB.Linq.Builder
 			new EnumerableBuilder          (),
 			new QueryExtensionBuilder      (),
 			new QueryNameBuilder           (),
-		};
+		}
+#if !NATIVE_READONLY && THE_RAOT_CORE
+		.WrapAsIReadOnlyList()
+#endif
+					;
 
 		#endregion
 
@@ -184,7 +191,11 @@ namespace LinqToDB.Linq.Builder
 				lock (_sync)
 				{
 					_reorder = false;
-					_sequenceBuilders = _sequenceBuilders.OrderByDescending(static _ => _.BuildCounter).ToArray();
+					_sequenceBuilders = _sequenceBuilders.OrderByDescending(static _ => _.BuildCounter).ToArray()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+															.WrapAsIReadOnlyList()
+#endif
+					;
 				}
 
 			_query.Init(sequence, _parametersContext.CurrentSqlParameters);

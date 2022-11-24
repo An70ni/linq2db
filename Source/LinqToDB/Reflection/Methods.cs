@@ -8,6 +8,8 @@ namespace LinqToDB.Reflection
 {
 	using System.Data;
 	using System.Data.Common;
+	using System.Threading;
+	using System.Threading.Tasks;
 	using Expressions;
 	using Linq;
 	using LinqToDB.Common;
@@ -28,7 +30,11 @@ namespace LinqToDB.Reflection
 		public static class ADONet
 		{
 			public static readonly MethodInfo   IsDBNull         = MemberHelper.MethodOf  <DbDataReader>(r => r.IsDBNull(0));
+#if NET40 && THE_RAOT_CORE
+			public static readonly MethodInfo   IsDBNullAsync    = MemberHelper.MethodOf  <DbDataReader>(r => TaskEx.FromResult(r.IsDBNull(0)));
+#else
 			public static readonly MethodInfo   IsDBNullAsync    = MemberHelper.MethodOf  <DbDataReader>(r => r.IsDBNullAsync(0));
+#endif
 			public static readonly PropertyInfo ConnectionString = MemberHelper.PropertyOf<DbConnection>(c => c.ConnectionString);
 		}
 
@@ -351,9 +357,9 @@ namespace LinqToDB.Reflection
 			}
 		}
 
-		#region Method definition helper classes
+#region Method definition helper classes
 
-		#pragma warning disable 649
+#pragma warning disable 649
 
 		abstract class LW1
 		{
@@ -377,9 +383,9 @@ namespace LinqToDB.Reflection
 			public int Value3;
 		}
 
-		#pragma warning restore 649
+#pragma warning restore 649
 
-		#endregion
+#endregion
 
 	}
 }

@@ -285,8 +285,13 @@ namespace LinqToDB.Expressions
 
 				var subscribeGenerator = new ExpressionGenerator(this);
 				var pWrapper           = Expression.Parameter(wrapperType);
-
+#if NET40
+#pragma warning disable CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
+#endif
 				foreach (var eventName in (string[])events.GetValue(null)!)
+#if NET40
+#pragma warning restore CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
+#endif
 				{
 					var wrapperEvent = wrapperType.GetEvent(eventName)!;
 					var delegateType = wrapperEvent.EventHandlerType!;
@@ -340,7 +345,11 @@ namespace LinqToDB.Expressions
 					subscribeGenerator.AddExpression(
 						Expression.Call(
 							Expression.Convert(ExpressionHelper.Property(pWrapper, nameof(TypeWrapper.instance_)), targetType),
+#if !NET40
 							ei.AddMethod!,
+#else
+							ei.GetAddMethod()!,
+#endif
 							Expression.Lambda(delegateType, handlerGenerator.ResultExpression, parameters)));
 				}
 
@@ -382,12 +391,17 @@ namespace LinqToDB.Expressions
 			var wrappers = wrapperType.GetProperty("Wrappers", BindingFlags.Static | BindingFlags.NonPublic);
 
 			if (wrappers != null)
+#if NET40
+#pragma warning disable CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
+#endif
 				return ((IEnumerable<object>)wrappers.GetValue(null)!)
 					.Select(e => e is Tuple<LambdaExpression, bool> tuple
 						? new { expr = tuple.Item1, optional = tuple.Item2 }
 						: new { expr = (LambdaExpression)e, optional = false })
 					.Select(e => BuildWrapper(e.expr, e.optional)!).ToArray();
-
+#if NET40
+#pragma warning restore CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
+#endif
 			return null;
 		}
 

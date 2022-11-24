@@ -4,6 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using LinqToDB.Common;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+using Theraot.Collections;
+#endif
 
 namespace LinqToDB.Metadata
 {
@@ -28,7 +31,11 @@ namespace LinqToDB.Metadata
 		}
 
 		private List<IMetadataReader>          _readers;
-		public  IReadOnlyList<IMetadataReader>  Readers => _readers;
+		public  IReadOnlyList<IMetadataReader>  Readers => _readers
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyList()
+#endif
+				;
 
 		internal void AddReader(IMetadataReader reader)
 		{

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace LinqToDB.Linq
 {
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 	using Async;
 #endif
 	using Builder;
@@ -508,7 +508,7 @@ namespace LinqToDB.Linq
 
 			public T Current { get; set; } = default!;
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 			public async Task<bool> MoveNextAsync()
 #else
 			public async ValueTask<bool> MoveNextAsync()
@@ -554,7 +554,7 @@ namespace LinqToDB.Linq
 				_dataReader  = null;
 			}
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 			public async Task DisposeAsync()
 #else
 			public async ValueTask DisposeAsync()

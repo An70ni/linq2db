@@ -5,7 +5,9 @@ namespace LinqToDB.Linq.Builder
 	/// <summary>
 	/// Contains result of <see cref="IBuildContext.IsExpression"/> function call.
 	/// </summary>
+#pragma warning disable IDE0250 // Make struct 'readonly'
 	struct IsExpressionResult
+#pragma warning restore IDE0250 // Make struct 'readonly'
 	{
 		/// <summary>
 		/// Indicates when test or request was successful.

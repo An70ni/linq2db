@@ -9,6 +9,9 @@ namespace LinqToDB.DataProvider.Oracle
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	// Missing features:
 	// - function with ref_cursor return type returns object, need to find out how to map it
@@ -137,7 +140,11 @@ namespace LinqToDB.DataProvider.Oracle
 			IEnumerable<TableSchema> tables, GetSchemaOptions options)
 		{
 			if (SchemasFilter == null)
-				return new List<PrimaryKeyInfo>();
+				return new List<PrimaryKeyInfo>()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 
 			return
 				dataConnection.Query<PrimaryKeyInfo>(@"
@@ -155,7 +162,11 @@ namespace LinqToDB.DataProvider.Oracle
 						FKCOLS.CONSTRAINT_NAME = FKCON.CONSTRAINT_NAME AND
 						FKCON.CONSTRAINT_TYPE  = 'P' AND
 						FKCOLS.OWNER " + SchemasFilter)
-				.ToList();
+				.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		private int GetMajorVersion(DataConnection dataConnection)
@@ -265,7 +276,11 @@ namespace LinqToDB.DataProvider.Oracle
 			IEnumerable<TableSchema> tables, GetSchemaOptions options)
 		{
 			if (SchemasFilter == null)
-				return new List<ForeignKeyInfo>();
+				return new List<ForeignKeyInfo>()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 
 			if (IncludedSchemas.Count != 0 || ExcludedSchemas.Count != 0)
 			{
@@ -299,7 +314,11 @@ namespace LinqToDB.DataProvider.Oracle
 							FKCOLS.POSITION       = PKCOLS.POSITION AND
 							FKCON.OWNER " + SchemasFilter + @" AND
 							PKCON.OWNER " + SchemasFilter)
-					.ToList();
+					.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 			}
 			else
 			{
@@ -324,7 +343,11 @@ namespace LinqToDB.DataProvider.Oracle
 							FKCOLS.POSITION       = PKCOLS.POSITION
 						ORDER BY Ordinal, Name
 						")
-						.ToList();
+						.ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 			}
 		}
 

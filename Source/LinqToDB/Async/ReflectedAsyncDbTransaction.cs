@@ -14,7 +14,7 @@ namespace LinqToDB.Async
 	{
 		private readonly Func<DbTransaction, CancellationToken, Task>? _commitAsync;
 		private readonly Func<DbTransaction, CancellationToken, Task>? _rollbackAsync;
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		private readonly Func<DbTransaction, ValueTask>?               _disposeAsync;
 #else
 		private readonly Func<DbTransaction, Task>?                    _disposeAsync;
@@ -24,7 +24,7 @@ namespace LinqToDB.Async
 			DbTransaction transaction,
 			Func<DbTransaction, CancellationToken, Task>? commitAsync,
 			Func<DbTransaction, CancellationToken, Task>? rollbackAsync,
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 			Func<DbTransaction, ValueTask>?               disposeAsync)
 #else
 			Func<DbTransaction, Task>?                    disposeAsync)
@@ -46,7 +46,7 @@ namespace LinqToDB.Async
 			return _rollbackAsync?.Invoke(Transaction, cancellationToken) ?? base.RollbackAsync(cancellationToken);
 		}
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 		public override Task DisposeAsync()
 #else
 		public override ValueTask DisposeAsync()

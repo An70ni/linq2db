@@ -9,6 +9,9 @@ namespace LinqToDB.SchemaProvider
 	using Common;
 	using Data;
 	using LinqToDB.SqlProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	public abstract class SchemaProviderBase : ISchemaProvider
 	{
@@ -198,8 +201,11 @@ namespace LinqToDB.SchemaProvider
 				#endregion
 
 				#region FK
-
+#if NATIVE_READONLY || !THE_RAOT_CORE
 				var fks = options.GetForeignKeys ? GetForeignKeys(dataConnection, tables, options) : Array<ForeignKeyInfo>.Empty;
+#else
+				var fks = options.GetForeignKeys ? GetForeignKeys(dataConnection, tables, options) : Array<ForeignKeyInfo>.Empty.WrapAsIReadOnlyCollection();
+#endif
 
 				foreach (var fk in fks.OrderBy(f => f.Ordinal))
 				{

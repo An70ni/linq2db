@@ -20,7 +20,11 @@ namespace LinqToDB.Async
 #else
 		private readonly Func<DbConnection, CancellationToken, Task<IAsyncDbTransaction>>?                      _beginTransactionAsync;
 		private readonly Func<DbConnection, IsolationLevel, CancellationToken, Task<IAsyncDbTransaction>>?      _beginTransactionIlAsync;
+#if !THE_RAOT_CORE
 		private readonly Func<DbConnection, Task>?                                                              _disposeAsync;
+#else
+		private readonly Func<DbConnection, ValueTask>?                                                         _disposeAsync;
+#endif
 #endif
 
 		public ReflectedAsyncDbConnection(
@@ -34,7 +38,7 @@ namespace LinqToDB.Async
 #endif
 			Func<DbConnection, CancellationToken, Task>?                                           openAsync,
 			Func<DbConnection, Task>?                                                              closeAsync,
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 			Func<DbConnection, ValueTask>?                                                         disposeAsync)
 #else
 			Func<DbConnection, Task>?                                                              disposeAsync)
@@ -76,7 +80,7 @@ namespace LinqToDB.Async
 			return _closeAsync?.Invoke(Connection) ?? base.CloseAsync();
 		}
 
-#if !NATIVE_ASYNC
+#if !NATIVE_ASYNC && !THE_RAOT_CORE
 		public override Task DisposeAsync()
 #else
 		public override ValueTask DisposeAsync()

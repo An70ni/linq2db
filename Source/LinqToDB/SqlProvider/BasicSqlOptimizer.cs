@@ -16,6 +16,9 @@ namespace LinqToDB.SqlProvider
 	using Linq;
 	using Mapping;
 	using SqlQuery;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 	using Tools;
 
 	public class BasicSqlOptimizer : ISqlOptimizer
@@ -3718,7 +3721,13 @@ namespace LinqToDB.SqlProvider
 
 					IReadOnlyCollection<SqlOrderByItem>? orderByItems = null;
 					if (!query.OrderBy.IsEmpty)
-						orderByItems = query.OrderBy.Items;
+					{
+						orderByItems = query.OrderBy.Items
+#if !NATIVE_READONLY && THE_RAOT_CORE
+															.WrapAsIReadOnlyCollection()
+#endif
+						;
+					}
 					//else if (query.Select.Columns.Count > 0)
 					//{
 					//	orderByItems = query.Select.Columns
@@ -3730,7 +3739,11 @@ namespace LinqToDB.SqlProvider
 					//}
 
 					if (orderByItems == null || orderByItems.Count == 0)
-						orderByItems = context.supportsEmptyOrderBy ? Array<SqlOrderByItem>.Empty : new[] { new SqlOrderByItem(new SqlExpression("SELECT NULL"), false) };
+						orderByItems = (context.supportsEmptyOrderBy ? Array<SqlOrderByItem>.Empty : new[] { new SqlOrderByItem(new SqlExpression("SELECT NULL"), false) })
+#if !NATIVE_READONLY && THE_RAOT_CORE
+															.WrapAsIReadOnlyCollection()
+#endif
+					;
 
 					var orderBy = string.Join(", ",
 						orderByItems.Select(static (oi, i) => oi.IsDescending ? $"{{{i}}} DESC" : $"{{{i}}}"));

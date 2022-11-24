@@ -454,7 +454,7 @@ namespace LinqToDB
 			((IDataContext)this).Close();
 		}
 
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		async ValueTask IAsyncDisposable.DisposeAsync()
 #else
 		async Task IAsyncDisposable.DisposeAsync()
@@ -466,14 +466,14 @@ namespace LinqToDB
 		/// <summary>
 		/// Closes underlying connection.
 		/// </summary>
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		protected virtual ValueTask DisposeAsync(bool disposing)
 #else
 		protected virtual Task DisposeAsync(bool disposing)
 #endif
 		{
 			_disposed = true;
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 			return new ValueTask(((IDataContext)this).CloseAsync());
 #else
 			return ((IDataContext)this).CloseAsync();
@@ -603,7 +603,7 @@ namespace LinqToDB
 				_dataContext = null;
 			}
 
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 			public async ValueTask DisposeAsync()
 #else
 			public async Task DisposeAsync()

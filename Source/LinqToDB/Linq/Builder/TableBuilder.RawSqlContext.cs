@@ -8,6 +8,9 @@ namespace LinqToDB.Linq.Builder
 	using Common;
 	using LinqToDB.Expressions;
 	using SqlQuery;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	partial class TableBuilder
 	{
@@ -41,12 +44,20 @@ namespace LinqToDB.Linq.Builder
 					for (var i = 0; i < args.Length; i++)
 						args[i] = mc.Arguments[i + 1];
 
-					arguments = args;
+					arguments = args
+#if !NATIVE_READONLY && THE_RAOT_CORE
+									.WrapAsIReadOnlyList()
+#endif
+					;
 				}
 				else
 				{
 					format    = (string)mc.Arguments[0].EvaluateExpression()!;
-					arguments = ((NewArrayExpression)mc.Arguments[1]).Expressions;
+					arguments = ((NewArrayExpression)mc.Arguments[1]).Expressions
+#if !NATIVE_READONLY && THE_RAOT_CORE
+									.WrapAsIReadOnlyList()
+#endif
+					;
 				}
 			}
 			else
@@ -78,7 +89,11 @@ namespace LinqToDB.Linq.Builder
 						args[i] = expr;
 					}
 
-					arguments = args;
+					arguments = args
+#if !NATIVE_READONLY && THE_RAOT_CORE
+									.WrapAsIReadOnlyList()
+#endif
+					;
 				}
 				else
 #endif
@@ -90,7 +105,11 @@ namespace LinqToDB.Linq.Builder
 
 					if (arrayExpr.NodeType == ExpressionType.NewArrayInit)
 					{
-						arguments = ((NewArrayExpression)arrayExpr).Expressions;
+						arguments = ((NewArrayExpression)arrayExpr).Expressions
+#if !NATIVE_READONLY && THE_RAOT_CORE
+									.WrapAsIReadOnlyList()
+#endif
+					;
 					}
 					else
 					{
@@ -113,7 +132,11 @@ namespace LinqToDB.Linq.Builder
 							args[i] = expr;
 						}
 
-						arguments = args;
+						arguments = args
+#if !NATIVE_READONLY && THE_RAOT_CORE
+									.WrapAsIReadOnlyList()
+#endif
+					;
 					}
 				}
 			}

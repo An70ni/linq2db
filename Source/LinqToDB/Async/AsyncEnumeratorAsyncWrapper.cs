@@ -27,13 +27,21 @@ namespace LinqToDB.Async
 		T IAsyncEnumerator<T>.Current => _enumerator!.Current;
 
 #if !NATIVE_ASYNC
+#if THE_RAOT_CORE
+		async ValueTask IAsyncDisposable.DisposeAsync()
+#else
 		async Task IAsyncDisposable.DisposeAsync()
+#endif
 		{
 			await _enumerator!.DisposeAsync().ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
 			_disposable?.Dispose();
 		}
 
+#if THE_RAOT_CORE
+		async ValueTask<bool> IAsyncEnumerator<T>.MoveNextAsync()
+#else
 		async Task<bool> IAsyncEnumerator<T>.MoveNextAsync()
+#endif
 		{
 			if (_enumerator == null)
 			{

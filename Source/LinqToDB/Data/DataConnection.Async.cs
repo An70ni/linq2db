@@ -274,7 +274,7 @@ namespace LinqToDB.Data
 		/// Disposes connection asynchronously.
 		/// </summary>
 		/// <returns>Asynchronous operation completion task.</returns>
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 		public async ValueTask DisposeAsync()
 #else
 		public async Task DisposeAsync()
@@ -522,7 +522,7 @@ namespace LinqToDB.Data
 				: await CurrentCommand!.ExecuteReaderAsync(commandBehavior, cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext);
 
 			if (_commandInterceptor != null)
-				_commandInterceptor.AfterExecuteReader(new (this), _command!, commandBehavior, dr);
+				_commandInterceptor.AfterExecuteReader(new CommandEventData(this), _command!, commandBehavior, dr);
 
 			var wrapper = new DataReaderWrapper(this, dr, CurrentCommand);
 			_command    = null;

@@ -11,6 +11,9 @@ namespace LinqToDB.DataProvider.Firebird
 	using Common;
 	using Data;
 	using SchemaProvider;
+#if !NATIVE_READONLY && THE_RAOT_CORE
+	using Theraot.Collections;
+#endif
 
 	class FirebirdSchemaProvider : SchemaProviderBase
 	{
@@ -73,7 +76,11 @@ namespace LinqToDB.DataProvider.Firebird
 					ColumnName     = pk.Field<string>("COLUMN_NAME")!,
 					Ordinal        = ConvertTo<int>.From(pk["ORDINAL_POSITION"]),
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ColumnInfo> GetColumns(DataConnection dataConnection, GetSchemaOptions options)
@@ -121,7 +128,11 @@ namespace LinqToDB.DataProvider.Firebird
 					OtherColumn  = c.Field<string>("REFERENCED_COLUMN_NAME")!,
 					Ordinal      = Converter.ChangeTypeTo<int> (c["ORDINAL_POSITION"]),
 				}
-			).ToList();
+			).ToList()
+#if !NATIVE_READONLY && THE_RAOT_CORE
+				.WrapAsIReadOnlyCollection()
+#endif
+				;
 		}
 
 		protected override List<ProcedureInfo>? GetProcedures(DataConnection dataConnection, GetSchemaOptions options)

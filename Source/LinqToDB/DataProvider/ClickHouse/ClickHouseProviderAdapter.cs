@@ -404,7 +404,7 @@ namespace LinqToDB.DataProvider.ClickHouse
 
 			[Wrapper]
 			public class ClickHouseColumnWriter : TypeWrapper, IDisposable,
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 				IAsyncDisposable
 #else
 				Async.IAsyncDisposable
@@ -424,7 +424,7 @@ namespace LinqToDB.DataProvider.ClickHouse
 					// [4]: WriteTableAsync
 					new Tuple<LambdaExpression, bool>((Expression<Func<ClickHouseColumnWriter, IReadOnlyList<object>, int, CancellationToken, Task>>)((ClickHouseColumnWriter this_, IReadOnlyList<object> columns, int rowCount, CancellationToken cancellationToken) => this_.WriteTableAsync(columns, rowCount, cancellationToken)), true),
 
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 					// [5]: DisposeAsync
 					new Tuple<LambdaExpression, bool>
 					((Expression<Func<ClickHouseColumnWriter, ValueTask>>)((ClickHouseColumnWriter this_) => this_.DisposeAsync()), true),
@@ -448,7 +448,7 @@ namespace LinqToDB.DataProvider.ClickHouse
 				public Task WriteTableAsync(IReadOnlyList<object> columns, int rowCount, CancellationToken cancellationToken) => ((Func<ClickHouseColumnWriter, IReadOnlyList<object>, int, CancellationToken, Task>)CompiledWrappers[4])(this, columns, rowCount, cancellationToken);
 				public void ConfigureColumn(int ordinal, ClickHouseColumnSettings columnSettings)                             => ((Action<ClickHouseColumnWriter, int, ClickHouseColumnSettings>)CompiledWrappers[6])(this, ordinal, columnSettings);
 
-#if NATIVE_ASYNC
+#if NATIVE_ASYNC || THE_RAOT_CORE
 				public ValueTask DisposeAsync() => ((Func<ClickHouseColumnWriter, ValueTask>)CompiledWrappers[5])(this);
 #else
 				[return: CustomMapper(typeof(ValueTaskToTaskMapper))]
