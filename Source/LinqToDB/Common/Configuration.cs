@@ -63,11 +63,17 @@ namespace LinqToDB.Common
 		/// Default value: <c>true</c>.
 		/// </summary>
 		public static bool UseEnumValueNameForStringColumns = true;
-
+#if NATIVE_ASYNC || !THE_RAOT_CORE
 		/// <summary>
 		/// Defines value to pass to <see cref="Task.ConfigureAwait(bool)"/> method for all linq2db internal await operations.
 		/// Default value: <c>false</c>.
 		/// </summary>
+#else
+		/// <summary>
+		/// Defines value to pass to <see cref="TaskTheraotExtensions.ConfigureAwait(Task,bool)"/> method for all linq2db internal await operations.
+		/// Default value: <c>false</c>.
+		/// </summary>
+#endif
 		public static bool ContinueOnCapturedContext;
 
 		/// <summary>
