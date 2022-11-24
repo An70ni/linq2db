@@ -120,7 +120,11 @@ namespace LinqToDB.Data
 
 		public async Task QueryForEachAsync<T>(Func<DbDataReader, T> objectReader, Action<T> action, CancellationToken cancellationToken)
 		{
+#if NET40
+			while (Reader!.Read())
+#else
 			while (await Reader!.ReadAsync(cancellationToken).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext))
+#endif
 				action(objectReader(Reader));
 		}
 
@@ -160,8 +164,14 @@ namespace LinqToDB.Data
 		public async Task QueryForEachAsync<T>(Action<T> action, CancellationToken cancellationToken)
 		{
 			if (ReadNumber != 0)
+			{
+#if NET40
+				if (!Reader!.NextResult())
+#else
 				if (!await Reader!.NextResultAsync(cancellationToken).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext))
+#endif
 					return;
+			}
 
 			ReadNumber++;
 
@@ -218,7 +228,11 @@ namespace LinqToDB.Data
 		public async Task<T> ExecuteForEachAsync<T>(CancellationToken cancellationToken)
 		{
 			if (ReadNumber != 0)
+#if NET40
+				if (!Reader!.NextResult())
+#else
 				if (!await Reader!.NextResultAsync(cancellationToken).ConfigureAwait(Common.Configuration.ContinueOnCapturedContext))
+#endif
 					return default(T)!;
 
 			ReadNumber++;

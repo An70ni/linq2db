@@ -687,7 +687,11 @@ namespace LinqToDB.Data
 
 				public Task<bool> ReadAsync(CancellationToken cancellationToken)
 				{
+#if NET40 && THE_RAOT_CORE
+					return TaskEx.FromResult(_dataReader.DataReader!.Read());
+#else
 					return _dataReader.DataReader!.ReadAsync(cancellationToken);
+#endif
 				}
 
 				public void Dispose()

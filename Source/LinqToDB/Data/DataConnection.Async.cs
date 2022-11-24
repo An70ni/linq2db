@@ -354,7 +354,11 @@ namespace LinqToDB.Data
 
 			return result.HasValue
 				? result.Value
+#if NET40
+				: CurrentCommand!.ExecuteNonQuery();
+#else
 				: await CurrentCommand!.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext);
+#endif
 		}
 
 		internal async Task<int> ExecuteNonQueryDataAsync(CancellationToken cancellationToken)
@@ -436,7 +440,11 @@ namespace LinqToDB.Data
 
 			return result.HasValue
 				? result.Value
+#if NET40
+				: CurrentCommand!.ExecuteScalar();
+#else
 				: await CurrentCommand!.ExecuteScalarAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext);
+#endif
 		}
 
 		internal async Task<object?> ExecuteScalarDataAsync(CancellationToken cancellationToken)
@@ -519,7 +527,11 @@ namespace LinqToDB.Data
 
 			var dr = result.HasValue
 				? result.Value
+#if NET40
+				: CurrentCommand!.ExecuteReader(commandBehavior);
+#else
 				: await CurrentCommand!.ExecuteReaderAsync(commandBehavior, cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext);
+#endif
 
 			if (_commandInterceptor != null)
 				_commandInterceptor.AfterExecuteReader(new CommandEventData(this), _command!, commandBehavior, dr);

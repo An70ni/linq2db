@@ -254,7 +254,11 @@ namespace LinqToDB.Data
 #else
 				using (var rd = await DataConnection.ExecuteDataReaderAsync(GetCommandBehavior(), cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext))
 #endif
+#if NET40
+					while (rd.DataReader!.Read())
+#else
 					while (await rd.DataReader!.ReadAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext))
+#endif
 						action(objectReader(rd.DataReader!));
 		}
 		}
@@ -440,7 +444,11 @@ namespace LinqToDB.Data
 				using (var rd = await DataConnection.ExecuteDataReaderAsync(GetCommandBehavior(), cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext))
 #endif
 			{
+#if NET40
+					if (rd.DataReader!.Read())
+#else
 					if (await rd.DataReader!.ReadAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext))
+#endif
 				{
 						var additionalKey = GetCommandAdditionalKey(rd.DataReader!, typeof(T));
 						var reader        = ((IDataContext)DataConnection).UnwrapDataObjectInterceptor?.UnwrapDataReader(DataConnection, rd.DataReader!) ?? rd.DataReader!;
@@ -467,7 +475,12 @@ namespace LinqToDB.Data
 
 						action(result);
 
-						} while (await rd.DataReader!.ReadAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext));
+						}
+#if NET40
+						while (rd.DataReader!.Read());
+#else
+						while (await rd.DataReader!.ReadAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext));
+#endif
 				}
 			}
 		}
@@ -765,7 +778,11 @@ namespace LinqToDB.Data
 			{
 				if (_isFinished)
 					return false;
+#if NET40
+				if (!_rd.Read())
+#else
 				if (!await _rd.ReadAsync(_cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext))
+#endif
 				{
 					_isFinished = true;
 					return false;
@@ -849,7 +866,12 @@ namespace LinqToDB.Data
 				}
 
 				resultIndex++;
-			} while (await rd.NextResultAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext));
+			}
+#if NET40
+			while (rd.NextResult());
+#else
+			while (await rd.NextResultAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext));
+#endif
 
 			return result;
 		}
@@ -1100,7 +1122,11 @@ namespace LinqToDB.Data
 				using (var rd = await DataConnection.ExecuteDataReaderAsync(GetCommandBehavior(), cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext))
 #endif
 			{
+#if NET40
+					if (rd.DataReader!.Read())
+#else
 					if (await rd.DataReader!.ReadAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext))
+#endif
 				{
 						var additionalKey = GetCommandAdditionalKey(rd.DataReader!, typeof(T));
 					try
@@ -1269,7 +1295,11 @@ namespace LinqToDB.Data
 
 		internal async Task ExecuteQueryAsync<T>(DbDataReader rd, string sql, Action<T> action, CancellationToken cancellationToken)
 		{
+#if NET40
+			if (rd.Read())
+#else
 			if (await rd.ReadAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext))
+#endif
 			{
 				var additionalKey = GetCommandAdditionalKey(rd, typeof(T));
 				var objectReader  = GetObjectReader<T>(DataConnection, rd, sql, additionalKey);
@@ -1295,13 +1325,22 @@ namespace LinqToDB.Data
 
 					action(result);
 
-				} while (await rd.ReadAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext));
+				}
+#if NET40
+				while (rd.Read());
+#else
+				while (await rd.ReadAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext));
+#endif
 			}
 		}
 
 		internal async Task<T> ExecuteScalarAsync<T>(DbDataReader rd, string sql, CancellationToken cancellationToken)
 		{
+#if NET40
+			if (rd.Read())
+#else
 			if (await rd.ReadAsync(cancellationToken).ConfigureAwait(Configuration.ContinueOnCapturedContext))
+#endif
 			{
 				var additionalKey = GetCommandAdditionalKey(rd, typeof(T));
 				try
