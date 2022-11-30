@@ -607,6 +607,30 @@ namespace LinqToDB.DataProvider.Oracle
 
 			var connectionFactory = typeMapper.BuildWrappedFactory((string connectionString) => new OracleWrappers.OracleConnection(connectionString));
 
+			Func<DbConnection, string> hostNameGetter;
+			Func<DbConnection, string> serviceNameGetter;
+			if (isNative)
+			{
+				if (assembly.GetName().Version!.CompareTo(new Version(2,111,6,0)) >= 0)
+				{
+					var dbConnectionParameter = Expression.Parameter(typeof(DbConnection));
+					var connectionParameter=Expression.Convert(dbConnectionParameter,connectionType);
+					var conRefContext=Expression.Field(Expression.Field(connectionParameter, "m_opoConCtx"), "opoConRefCtx");
+
+					hostNameGetter = Expression.Lambda<Func<DbConnection, string>>(Expression.Field(conRefContext, "hostName"), dbConnectionParameter).CompileExpression();
+					serviceNameGetter = Expression.Lambda<Func<DbConnection, string>>(Expression.Field(conRefContext, "serviceName"), dbConnectionParameter).CompileExpression(); 
+				}
+				else
+				{
+					hostNameGetter = connectionMapper.Member(c => c.HostName).BuildGetter<DbConnection>();
+					serviceNameGetter = connectionMapper.Member(c => c.ServiceName).BuildGetter<DbConnection>();
+				}
+			}
+			else {
+				hostNameGetter = connectionMapper.Member(c => c.HostName).BuildGetter<DbConnection>();
+				serviceNameGetter = connectionMapper.Member(c => c.ServiceName).BuildGetter<DbConnection>();
+			}
+
 			return new OracleProviderAdapter(
 				connectionType,
 				dataReaderType,
@@ -651,8 +675,8 @@ namespace LinqToDB.DataProvider.Oracle
 				},
 				p => OracleWrappers.ConvertDbType(dbTypeGetter(p)),
 
-				connectionMapper.Member(c => c.HostName).BuildGetter<DbConnection>(),
-				connectionMapper.Member(c => c.ServiceName).BuildGetter<DbConnection>(),
+				hostNameGetter,
+				serviceNameGetter,
 
 				commandMapper.Member(p => p.BindByName).BuildSetter<DbCommand>(),
 				commandMapper.Member(p => p.ArrayBindCount).BuildSetter<DbCommand>(),
